@@ -1,4 +1,4 @@
-module evaluacion_cumplido_prov_mid
+module github.com/udistrital/evaluacion_cumplido_prov_mid
 
 go 1.18
 
