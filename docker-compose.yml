@@ -1,0 +1,25 @@
+version: '3.4'
+
+services: 
+  cumplidos_crud_api:
+
+    image: golang:1.15-alpine
+    container_name: ${API_NAME}
+    volumes:
+      - go_src:/go
+      - .:/go/src/${API_BASE_DIR}/${API_NAME}
+    environment:
+      - GO111MODULE=on
+    env_file: 
+      - .env
+    ports: 
+      - "${VALUACION_CUMPLIDO_PROV_MID_HTTP_PORT}:${VALUACION_CUMPLIDO_PROV_MID_HTTP_PORT}"
+    working_dir: /go/src
+    command: sh -c 'cd ${API_BASE_DIR}/${API_NAME};go get -u github.com/beego/bee ;go get -v -u ./...; pwd;go mod init; bee run -downdoc=true -gendoc=true'
+
+
+volumes:
+  go_src:
+networks: 
+  back_end:
+    external: true
