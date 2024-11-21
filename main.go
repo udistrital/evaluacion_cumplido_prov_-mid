@@ -3,15 +3,15 @@ package main
 import (
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/plugins/cors"
-	_ "github.com/udistrital/revision_cumplidos_proveedores_mid/routers"
-	apistatus "github.com/udistrital/utils_oas/apiStatusLib"
-	auditoria "github.com/udistrital/utils_oas/auditoria"
-	"github.com/udistrital/utils_oas/customerrorv2"
+	//apistatus "github.com/udistrital/utils_oas/apiStatusLib"
+	//auditoria "github.com/udistrital/utils_oas/auditoria"
+	_ "github.com/udistrital/evaluacion_cumplido_prov_mid/routers"
+	//"github.com/udistrital/utils_oas/customerrorv2"
 )
 
 func main() {
 	AllowedOrigins := []string{"*", "*.udistrital.edu.co"}
-	if beego.BConfig.RunMode == beego.AppConfig.String("EVALUACION_CUMPLIDO_PROV_MID_RUN_MODE") {
+	if beego.BConfig.RunMode == beego.AppConfig.String("runmode") {
 		beego.BConfig.WebConfig.DirectoryIndex = true
 		beego.BConfig.WebConfig.StaticDir["/swagger"] = "swagger"
 	}
@@ -27,8 +27,8 @@ func main() {
 		ExposeHeaders:    []string{"Content-Length"},
 		AllowCredentials: true,
 	}))
-	beego.ErrorController(&customerrorv2.CustomErrorController{})
-	apistatus.Init()
-	auditoria.InitMiddleware()
+	//beego.ErrorController(&customerrorv2.CustomErrorController{})
+	//apistatus.Init()
+	//	auditoria.InitMiddleware()
 	beego.Run()
 }

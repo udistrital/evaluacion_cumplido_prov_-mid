@@ -8,12 +8,19 @@
 package routers
 
 import (
-	"evaluacion_cumplido_prov_mid/controllers"
-
 	"github.com/astaxie/beego"
+	"github.com/udistrital/evaluacion_cumplido_prov_mid/controllers"
+	"github.com/udistrital/utils_oas/errorhandler"
 )
 
 func init() {
-	ns := beego.NewNamespace("/v1")
+	beego.ErrorController(&errorhandler.ErrorHandlerController{})
+	ns := beego.NewNamespace("/v1",
+		beego.NSNamespace("/test",
+			beego.NSInclude(
+				&controllers.TestController{},
+			),
+		),
+	)
 	beego.AddNamespace(ns)
 }

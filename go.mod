@@ -1,10 +1,9 @@
 module github.com/udistrital/evaluacion_cumplido_prov_mid
 
-go 1.18
+go 1.19
 
 require (
 	github.com/astaxie/beego v1.12.3
-	github.com/udistrital/revision_cumplidos_proveedores_mid v0.0.0-20241118151023-0a49d16cdb98
 	github.com/udistrital/utils_oas v0.0.0-20240829190820-0bdc14dd8544
 )
 
@@ -14,17 +13,11 @@ require (
 	github.com/aws/aws-xray-sdk-go v1.8.1 // indirect
 	github.com/beorn7/perks v1.0.1 // indirect
 	github.com/cespare/xxhash/v2 v2.1.1 // indirect
-	github.com/globalsign/mgo v0.0.0-20181015135952-eeefdecb41b8 // indirect
-	github.com/go-playground/locales v0.13.0 // indirect
-	github.com/go-playground/universal-translator v0.17.0 // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/hashicorp/golang-lru v0.5.4 // indirect
 	github.com/jmespath/go-jmespath v0.4.0 // indirect
 	github.com/klauspost/compress v1.15.0 // indirect
-	github.com/leodido/go-urn v1.2.1 // indirect
 	github.com/matttproud/golang_protobuf_extensions v1.0.1 // indirect
-	github.com/patrickmn/go-cache v2.1.0+incompatible // indirect
-	github.com/phpdave11/gofpdf v1.4.2 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/prometheus/client_golang v1.10.0 // indirect
 	github.com/prometheus/client_model v0.2.0 // indirect
@@ -40,6 +33,5 @@ require (
 	google.golang.org/genproto v0.0.0-20210114201628-6edceaf6022f // indirect
 	google.golang.org/grpc v1.35.0 // indirect
 	google.golang.org/protobuf v1.26.0 // indirect
-	gopkg.in/go-playground/validator.v9 v9.31.0 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 )
