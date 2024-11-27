@@ -31,10 +31,10 @@ func (c *ResultadoEvaluacionController) GuardarResultadoEvaluacion() {
 
 	json.Unmarshal(c.Ctx.Input.RequestBody, &v)
 
-	response, err := services.GuardarResultadoEvaluacion(v)
+	err := services.GuardarResultadoEvaluacion(v)
 	if err == nil {
-		c.Ctx.Output.SetStatus(200)
-		c.Data["json"] = requestresponse.APIResponseDTO(true, 200, response)
+		c.Ctx.Output.SetStatus(201)
+		c.Data["json"] = requestresponse.APIResponseDTO(true, 201, "Registro guardado con exito")
 	} else {
 		c.Ctx.Output.SetStatus(404)
 		c.Data["json"] = requestresponse.APIResponseDTO(false, 404, err)
