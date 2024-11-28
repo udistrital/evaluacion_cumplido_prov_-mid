@@ -11,7 +11,19 @@ info:
     url: http://www.apache.org/licenses/LICENSE-2.0.html
 basePath: /v1
 paths:
-  /test/ping:
+  /carga-data-excel/upload:
+    post:
+      tags:
+      - carga-data-excel
+  /test/pings:
     get:
       tags:
       - test
+  /test/upload:
+    post:
+      tags:
+      - test
+tags:
+- name: carga-data-excel
+  description: |
+    Carga-Data-ExcelController operations for Carga-Data-Excel
