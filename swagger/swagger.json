@@ -1,26 +1,57 @@
 {
     "swagger": "2.0",
     "info": {
-        "title": "beego Test API",
-        "description": "beego has a very cool tools to autogenerate documents for your API",
-        "version": "1.0.0",
-        "termsOfService": "http://beego.me/",
-        "contact": {
-            "email": "astaxie@gmail.com"
-        },
-        "license": {
-            "name": "Apache 2.0",
-            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
-        }
+        "contact": {}
     },
     "basePath": "/v1",
     "paths": {
+        "/resultado/resultado-evaluacion": {
+            "post": {
+                "tags": [
+                    "resultado"
+                ],
+                "description": "Guarda el resultado de una evaluación de cumplimiento de proveedor",
+                "operationId": "ResultadoEvaluacionController.GuardarResultadoEvaluacion",
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "Estructura con el resultado de la evaluación",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/BodyResultadoEvaluacion"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/models.CambioEstadoCumplidoResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "{object} map[string]interface{}"
+                    }
+                }
+            }
+        },
         "/test/ping": {
             "get": {
                 "tags": [
                     "test"
                 ]
             }
+        }
+    },
+    "definitions": {
+        "BodyResultadoEvaluacion": {
+            "title": "BodyResultadoEvaluacion",
+            "type": "object"
+        },
+        "models.CambioEstadoCumplidoResponse": {
+            "title": "CambioEstadoCumplidoResponse",
+            "type": "object"
         }
     }
 }
