@@ -6,46 +6,88 @@ import (
 	"strconv"
 
 	"github.com/udistrital/evaluacion_cumplido_prov_mid/models"
+	"github.com/udistrital/evaluacion_cumplido_prov_mid/services"
 	"github.com/xuri/excelize/v2"
 )
 
 // / CargaDataExcel lee  y  carga la data de un archivo excel
-func CargaDataExcel(excel multipart.File) {
+func CargaDataExcel(excel multipart.File) (response map[string]interface{}, itemsNoAGregados []models.ItemEvaluacion, outputError error) {
+
+	defer func() {
+		if err := recover(); err != nil {
+			outputError = fmt.Errorf("%v", err)
+			panic(outputError)
+		}
+	}()
 
 	f, err := excelize.OpenReader(excel)
 
 	if err != nil {
-		fmt.Errorf("Error al abrir el archivo: %v", err)
+		outputError = fmt.Errorf("Error al abrir el archivo: %v", err)
+		return nil, nil, outputError
 	}
 
-	var items []models.ItemEvaluacion
+	var itemsAAGregar []models.ItemEvaluacion
 
 	for i := 2; ; i++ {
 
-		Id := obtenerCelda(f, 65, i)
+		Id := obtenerCelda(f, "A", i)
 		if Id == "" {
 			break
 		}
 
+		posicionIdentificador := "A"
+		posicionNombre := "B"
+		posicionCantidad := "C"
+		posicionValorInitario := "D"
+		posicionIva := "E"
+		posicionUnidad := "F"
+		posicionTipoNecessidad := "G"
+		posicionFichaTecnica := "H"
+
+		valorUnidad := obtenerUnidadMedida(obtenerCelda(f, posicionUnidad, i))
+		valorTipoNecessidad := obtenerTipoNecessidad(obtenerCelda(f, posicionTipoNecessidad, i))
+
 		item := models.ItemEvaluacion{
-			Id:             obtenerCelda(f, 65, i),
-			Nombre:         obtenerCelda(f, 66, i),
-			Cantidad:       parseFloat(obtenerCelda(f, 67, i), 64),
-			ValorInitario:  parseFloat(obtenerCelda(f, 68, i), 64),
-			Iva:            parseFloat(obtenerCelda(f, 69, i), 64),
-			Unidad:         1,
-			TipoNecessidad: 1,
-			FichaTecnica:   obtenerCelda(f, 72, i),
+			Identificador: obtenerCelda(f, posicionIdentificador, i),
+			Nombre:        obtenerCelda(f, posicionNombre, i),
+			Cantidad:      parseFloat(obtenerCelda(f, posicionCantidad, i), 64),
+			ValorInitario: parseFloat(obtenerCelda(f, posicionValorInitario, i), 64),
+			Iva:           parseFloat(obtenerCelda(f, posicionIva, i), 64),
+			FichaTecnica:  obtenerCelda(f, posicionFichaTecnica, i),
+			EvaluacionId: models.Evaluacion{
+				Id: 1,
+			},
 		}
-		items = append(items, item)
-		fmt.Printf("%+v\n", items)
-		// return nil
+
+		if valorUnidad != 0 {
+			item.Unidad = valorUnidad
+		}
+
+		if valorTipoNecessidad != 0 {
+			item.TipoNecessidad = valorTipoNecessidad
+		}
+
+		if verificarExistencia(itemsAAGregar, item.Identificador) {
+			itemsAAGregar = append(itemsAAGregar, item)
+		} else {
+			itemsNoAGregados = append(itemsNoAGregados, item)
+		}
+
 	}
+
+	response, err = services.GuardarItem(itemsAAGregar)
+
+	if err != nil {
+		outputError = fmt.Errorf("Error al guardar item: %v", err)
+		return nil, nil, outputError
+	}
+	return response, itemsNoAGregados, nil
 }
 
-func obtenerCelda(excel *excelize.File, indexLetra int, indexCelda int) (cell string) {
+func obtenerCelda(excel *excelize.File, LetraColumna string, indexCelda int) (cell string) {
 
-	cell, err := excel.GetCellValue("Informacion", obtenerColumnna(indexLetra)+strconv.Itoa(indexCelda))
+	cell, err := excel.GetCellValue("Informacion", LetraColumna+strconv.Itoa(indexCelda))
 
 	if err != nil {
 		fmt.Errorf("Error al leer celda:  %v", err)
@@ -54,17 +96,42 @@ func obtenerCelda(excel *excelize.File, indexLetra int, indexCelda int) (cell st
 	return cell
 }
 
-func obtenerColumnna(index int) (columna string) {
-
-	return string(rune(index))
-}
-
 func parseFloat(s string, bitSize int) float64 {
 	f, _ := strconv.ParseFloat(s, bitSize)
 	return f
 }
 
-func parseInt(s string, bitSize int) int {
-	i, _ := strconv.Atoi(s)
-	return i
+func obtenerUnidadMedida(unidad string) (idUnidad int) {
+	unidadRespuesta, _ := services.ObternerUnidadMedida(unidad)
+
+	if unidadRespuesta != nil {
+		idUnidad = *unidadRespuesta
+		return idUnidad
+	}
+	return 0
+}
+
+func obtenerTipoNecessidad(tipoNecessidad string) (idTipoNecessidad int) {
+
+	if tipoNecessidad == "BIEN" {
+		return 1
+	}
+	if tipoNecessidad == "SERVICIO" {
+		return 2
+	}
+	if tipoNecessidad == "BIENES Y SERVICIOS" {
+		return 3
+	}
+	return 0
+}
+
+func verificarExistencia(listaItems []models.ItemEvaluacion, identificadorItem string) bool {
+
+	for _, item := range listaItems {
+		if item.Identificador == identificadorItem {
+			return false
+		}
+	}
+	return true
+
 }
