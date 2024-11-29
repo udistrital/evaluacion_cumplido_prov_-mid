@@ -15,14 +15,6 @@ paths:
     post:
       tags:
       - carga-data-excel
-  /test/pings:
-    get:
-      tags:
-      - test
-  /test/upload:
-    post:
-      tags:
-      - test
 tags:
 - name: carga-data-excel
   description: |

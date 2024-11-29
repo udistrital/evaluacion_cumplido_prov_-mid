@@ -21,11 +21,6 @@ func init() {
 				&controllers.CargaDataExcelController{},
 			),
 		),
-		beego.NSNamespace("/test",
-			beego.NSInclude(
-				&controllers.TestController{},
-			),
-		),
 	)
 	beego.AddNamespace(ns)
 }
