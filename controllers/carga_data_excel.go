@@ -40,7 +40,7 @@ func (c *CargaDataExcelController) UploadExcel() {
 	if err == nil {
 
 		c.Ctx.Output.SetStatus(200)
-		c.Data["json"] = requestresponse.APIResponseDTO(true, 200, response, responseMap)
+		c.Data["json"] = requestresponse.APIResponseDTO(true, 200, responseMap, response)
 	} else {
 		c.Ctx.Output.SetStatus(400)
 		c.Data["json"] = requestresponse.APIResponseDTO(false, 400, err)

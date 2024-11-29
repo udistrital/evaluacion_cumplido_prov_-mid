@@ -30,7 +30,7 @@ func ObternerUnidadMedida(unidad string) (idUnidad *int, outputError error) {
 	return nil, outputError
 }
 
-func GuardarItem(items []models.ItemEvaluacion) (response map[string]interface{}, err error) {
+func GuardarItems(items []models.ItemEvaluacion) (response map[string]interface{}, err error) {
 
 	var respuesta_peticion map[string]interface{}
 

@@ -11,7 +11,7 @@ import (
 )
 
 // / CargaDataExcel lee  y  carga la data de un archivo excel
-func CargaDataExcel(excel multipart.File) (response map[string]interface{}, itemsNoAGregados []models.ItemEvaluacion, outputError error) {
+func CargaDataExcel(excel multipart.File) (response string, itemsNoAGregados []models.ItemEvaluacion, outputError error) {
 
 	defer func() {
 		if err := recover(); err != nil {
@@ -24,7 +24,7 @@ func CargaDataExcel(excel multipart.File) (response map[string]interface{}, item
 
 	if err != nil {
 		outputError = fmt.Errorf("Error al abrir el archivo: %v", err)
-		return nil, nil, outputError
+		return "", nil, outputError
 	}
 
 	var itemsAAGregar []models.ItemEvaluacion
@@ -76,13 +76,13 @@ func CargaDataExcel(excel multipart.File) (response map[string]interface{}, item
 
 	}
 
-	response, err = services.GuardarItem(itemsAAGregar)
+	responseCrud, err := services.GuardarItems(itemsAAGregar)
 
 	if err != nil {
 		outputError = fmt.Errorf("Error al guardar item: %v", err)
-		return nil, nil, outputError
+		return "", nil, outputError
 	}
-	return response, itemsNoAGregados, nil
+	return responseCrud["Message"].(string), itemsNoAGregados, nil
 }
 
 func obtenerCelda(excel *excelize.File, LetraColumna string, indexCelda int) (cell string) {
