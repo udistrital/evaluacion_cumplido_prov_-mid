@@ -12,7 +12,7 @@ type ItemEvaluacion struct {
 	FichaTecnica      string
 	Unidad            int
 	Cantidad          float64
-	TipoNecessidad    int
+	TipoNecesidad     int
 	Activo            bool
 	FechaCreacion     time.Time
 	FechaModificacion time.Time

@@ -42,11 +42,11 @@ func CargaDataExcel(excel multipart.File) (response string, itemsNoAGregados []m
 		posicionValorInitario := "D"
 		posicionIva := "E"
 		posicionUnidad := "F"
-		posicionTipoNecessidad := "G"
+		posicionTipoNecesidad := "G"
 		posicionFichaTecnica := "H"
 
 		valorUnidad := obtenerUnidadMedida(obtenerCelda(f, posicionUnidad, i))
-		valorTipoNecessidad := obtenerTipoNecessidad(obtenerCelda(f, posicionTipoNecessidad, i))
+		valorTipoNecesidad := obtenerTipoNecesidad(obtenerCelda(f, posicionTipoNecesidad, i))
 
 		item := models.ItemEvaluacion{
 			Identificador: obtenerCelda(f, posicionIdentificador, i),
@@ -64,8 +64,8 @@ func CargaDataExcel(excel multipart.File) (response string, itemsNoAGregados []m
 			item.Unidad = valorUnidad
 		}
 
-		if valorTipoNecessidad != 0 {
-			item.TipoNecessidad = valorTipoNecessidad
+		if valorTipoNecesidad != 0 {
+			item.TipoNecesidad = valorTipoNecesidad
 		}
 
 		if verificarExistencia(itemsAAGregar, item.Identificador) {
@@ -111,15 +111,14 @@ func obtenerUnidadMedida(unidad string) (idUnidad int) {
 	return 0
 }
 
-func obtenerTipoNecessidad(tipoNecessidad string) (idTipoNecessidad int) {
-
-	if tipoNecessidad == "BIEN" {
+func obtenerTipoNecesidad(tipoNecesidad string) (idTipoNecesidad int) {
+	if tipoNecesidad == "BIEN" {
 		return 1
 	}
-	if tipoNecessidad == "SERVICIO" {
+	if tipoNecesidad == "SERVICIO" {
 		return 2
 	}
-	if tipoNecessidad == "BIENES Y SERVICIOS" {
+	if tipoNecesidad == "BIENES Y SERVICIOS" {
 		return 3
 	}
 	return 0
