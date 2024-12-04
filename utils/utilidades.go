@@ -41,6 +41,7 @@ func GetJsonTest(url string, target interface{}) (status int, err error) {
 			beego.Error(err)
 		}
 	}()
+	fmt.Println("JSON recibido:", r.StatusCode)
 	return r.StatusCode, json.NewDecoder(r.Body).Decode(target)
 }
 

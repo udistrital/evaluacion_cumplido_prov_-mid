@@ -1,9 +1,9 @@
 package models
 
 type UnidadMedida struct {
-	Id          int    `json:"id"`
-	Unidad      string `json:"unidad"`
-	Tipo        string `json:"tipo"`
-	Descripcion string `json:"descripcion"`
-	Estado      bool   `json:"estado"`
+	Id          int    `json:"Id"`
+	Unidad      string `json:"Unidad"`
+	Tipo        string `json:"Tipo"`
+	Descripcion string `json:"Descripcion"`
+	Estado      bool   `json:"Estado"`
 }

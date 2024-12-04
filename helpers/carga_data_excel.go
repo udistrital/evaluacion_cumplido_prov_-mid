@@ -52,7 +52,7 @@ func CargaDataExcel(excel multipart.File) (response string, itemsNoAGregados []m
 			Identificador: obtenerCelda(f, posicionIdentificador, i),
 			Nombre:        obtenerCelda(f, posicionNombre, i),
 			Cantidad:      parseFloat(obtenerCelda(f, posicionCantidad, i), 64),
-			ValorInitario: parseFloat(obtenerCelda(f, posicionValorInitario, i), 64),
+			ValorUnitario: parseFloat(obtenerCelda(f, posicionValorInitario, i), 64),
 			Iva:           parseFloat(obtenerCelda(f, posicionIva, i), 64),
 			FichaTecnica:  obtenerCelda(f, posicionFichaTecnica, i),
 			EvaluacionId: models.Evaluacion{

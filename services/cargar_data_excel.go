@@ -9,7 +9,6 @@ import (
 )
 
 func ObternerUnidadMedida(unidad string) (idUnidad *int, outputError error) {
-
 	defer func() {
 		if err := recover(); err != nil {
 			outputError = fmt.Errorf("%v", err)
@@ -18,14 +17,8 @@ func ObternerUnidadMedida(unidad string) (idUnidad *int, outputError error) {
 	}()
 
 	var unidadMedida []models.UnidadMedida
-	//fmt.Println("url", beego.AppConfig.String("UrlAdministrativaAmazonApi")+"/unidad")
-	if response, err := utils.GetJsonWSO2Test(beego.AppConfig.String("urlEvaluacionCumplidosCrud")+"/unidad", &unidadMedida); err == nil && response == 200 {
 
-		for _, unidadMedida := range unidadMedida {
-			if unidadMedida.Unidad == unidad {
-				return &unidadMedida.Id, outputError
-			}
-		}
+	if response, err := utils.GetJsonWSO2Test(beego.AppConfig.String("UrlAdministrativaAmazonApi")+"/unidad", &unidadMedida); err == nil && response == 200 {
 	}
 	return nil, outputError
 }

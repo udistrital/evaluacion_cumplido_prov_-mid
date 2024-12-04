@@ -7,7 +7,7 @@ type ItemEvaluacion struct {
 	EvaluacionId      Evaluacion
 	Identificador     string
 	Nombre            string
-	ValorInitario     float64
+	ValorUnitario     float64
 	Iva               float64
 	FichaTecnica      string
 	Unidad            int
