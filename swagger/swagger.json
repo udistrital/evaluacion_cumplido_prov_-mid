@@ -23,10 +23,14 @@
             }
         }
     },
-    "tags": [
-        {
-            "name": "carga-data-excel",
-            "description": "Carga-Data-ExcelController operations for Carga-Data-Excel\n"
+    "definitions": {
+        "BodyResultadoEvaluacion": {
+            "title": "BodyResultadoEvaluacion",
+            "type": "object"
+        },
+        "models.CambioEstadoCumplidoResponse": {
+            "title": "CambioEstadoCumplidoResponse",
+            "type": "object"
         }
-    ]
+    }
 }

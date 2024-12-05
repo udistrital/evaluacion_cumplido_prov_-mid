@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 #Variables de entorno
 .env
 
@@ -27,3 +28,28 @@ go.sum
 .env
 go.sum
 go.mod
+=======
+lastupdate.tmp
+.vscode/
+main
+go.mod
+go.sum
+go.sumcd
+swagger.zip
+.scannerwork/
+swagger/*.png
+swagger/*.html
+swagger/*.js
+swagger/*.map
+swagger/*.css
+swagger/*.yml
+swagger/css/
+swagger/fonts/
+swagger/images/
+swagger/lang/
+swagger/lib/
+evaluacion_cumplido_prov_mid
+evaluacion_cumplido_prov_mid.exe
+.env
+.idea/
+>>>>>>> develop
