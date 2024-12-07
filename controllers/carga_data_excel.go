@@ -2,7 +2,7 @@ package controllers
 
 import (
 	"github.com/astaxie/beego"
-	"github.com/udistrital/evaluacion_cumplido_prov_mid/helpers"
+	"github.com/udistrital/evaluacion_cumplido_prov_mid/services"
 	"github.com/udistrital/utils_oas/errorhandler"
 	"github.com/udistrital/utils_oas/requestresponse"
 )
@@ -31,7 +31,7 @@ func (c *CargaDataExcelController) UploadExcel() {
 
 	defer file.Close()
 
-	response, intemsNoAgregados, err := helpers.CargaDataExcel(file)
+	response, intemsNoAgregados, err := services.CargaDataExcel(file)
 
 	responseMap := map[string]interface{}{
 		"itemsNoAgregados": intemsNoAgregados,
