@@ -29,6 +29,7 @@ func GenerarDocumentoEvaluacion(evaluacion_id int) (outputError error) {
 		return outputError
 	}
 
+	fmt.Println("Informacion evaluacion: ", informacion_evaluacion)
 	// Abrir el archivo de la plantilla
 	filePath := "static/plantilla/Formato_aprobado_de_evaluación proveedores.xlsx"
 	f, err := excelize.OpenFile(filePath)
@@ -194,29 +195,48 @@ func registrarResultadosEvaluacion(f *excelize.File, sheetName string, informaci
 		preguntaAnterior = preguntaActual
 		// Buscar la pregunta en la información de la evaluación
 		for _, evaluacion := range informacion_evaluacion.ResultadoFinalEvaluacion.Resultados {
-			contador := 0
 			if strings.ToLower(strings.TrimSpace(evaluacion.Pregunta)) == strings.ToLower(preguntaActual) &&
 				strings.ToLower(strings.TrimSpace(evaluacion.Titulo)) == strings.ToLower(strings.TrimSpace(titulo)) {
-				contador++
-				fmt.Println("------------------------- Resultados -----------------------------------------------")
-				fmt.Println("Contador: ", contador)
-				fmt.Println("Pregunta actual: ", strings.ToLower(preguntaActual))
-				fmt.Println("Pregunta evaluacion: ", strings.ToLower(strings.TrimSpace(evaluacion.Pregunta)))
-				fmt.Println("Titulo evaluacion: ", strings.ToLower(strings.TrimSpace(evaluacion.Titulo)))
-				fmt.Println("Titulo actual: ", strings.ToLower(strings.TrimSpace(titulo)))
-				fmt.Println("Resultado: ", evaluacion.Cumplimiento)
-				fmt.Println("Pregunta: ", strings.ToLower(strings.TrimSpace(evaluacion.Pregunta)) == strings.ToLower(preguntaActual))
-				fmt.Println("Titulo: ", strings.ToLower(strings.TrimSpace(evaluacion.Titulo)) == strings.ToLower(strings.TrimSpace(titulo)))
-				fmt.Println("------------------------------------------------------------------------------------")
+				// fmt.Println("------------------------- Resultados -----------------------------------------------")
+				// fmt.Println("Pregunta actual: ", strings.ToLower(preguntaActual))
+				// fmt.Println("Pregunta evaluacion: ", strings.ToLower(strings.TrimSpace(evaluacion.Pregunta)))
+				// fmt.Println("Titulo evaluacion: ", strings.ToLower(strings.TrimSpace(evaluacion.Titulo)))
+				// fmt.Println("Titulo actual: ", strings.ToLower(strings.TrimSpace(titulo)))
+				// fmt.Println("Resultado: ", evaluacion.Cumplimiento)
+				// fmt.Println("Pregunta: ", strings.ToLower(strings.TrimSpace(evaluacion.Pregunta)) == strings.ToLower(preguntaActual))
+				// fmt.Println("Titulo: ", strings.ToLower(strings.TrimSpace(evaluacion.Titulo)) == strings.ToLower(strings.TrimSpace(titulo)))
+				// fmt.Println("------------------------------------------------------------------------------------")
 
 				err := f.SetCellValue(sheetName, fmt.Sprintf("E%d", row), evaluacion.Cumplimiento)
 				if err != nil {
 					return fmt.Errorf("Error al establecer el valor de la celda: %w", err)
 				}
+
+				err_actualizar := actualizarFormula(f, sheetName, fmt.Sprintf("G%d", row))
+				if err_actualizar != nil {
+					return fmt.Errorf("Error al actualizar la fórmula de la celda: %w", err)
+				}
 			}
 		}
 		row += 2
 	}
+	return nil
+}
+
+func actualizarFormula(f *excelize.File, sheetName, celda string) error {
+	formula, err := f.GetCellFormula(sheetName, celda)
+	if err != nil {
+		return fmt.Errorf("error al obtener la fórmula de la celda %s: %w", celda, err)
+	}
+
+	if formula == "" {
+		return nil
+	}
+
+	if err := f.SetCellFormula(sheetName, celda, formula); err != nil {
+		return fmt.Errorf("error al reasignar la fórmula en la celda %s: %w", celda, err)
+	}
+
 	return nil
 }
 
@@ -608,6 +628,7 @@ func ObtenerInformacionDocumento(evaluacion_id int) (informacion_evaluacion mode
 		outputError = fmt.Errorf("Error al obtener el contrato general")
 		return informacion_evaluacion, outputError
 	}
+
 	// Obtener la dependencia del contrato
 	dependencia_supervisor, error_contrato := ObtenerDependenciasSupervisor(strconv.Itoa(contrato_general.Supervisor.Documento))
 	if error_contrato != nil {
@@ -621,6 +642,8 @@ func ObtenerInformacionDocumento(evaluacion_id int) (informacion_evaluacion mode
 		outputError = fmt.Errorf("Error al obtener el resultado final de la evaluacion")
 		return informacion_evaluacion, outputError
 	}
+
+	//fmt.Println("Resultado final evaluacion: ", resultado_final_evaluacion)
 
 	//Obtener los datos del proveedor
 	var informacion_proveedor []models.InformacionProveedor
@@ -675,7 +698,7 @@ func ObtenerDependenciasSupervisor(documento_supervisor string) (dependencias_su
 	}()
 
 	var respuesta_peticion map[string]interface{}
-	//fmt.Println("Url dependencias: ", beego.AppConfig.String("UrlAdministrativaJBPM")+"/dependencias_supervisor/"+documento_supervisor)
+	fmt.Println("Url dependencias: ", beego.AppConfig.String("UrlAdministrativaJBPM")+"/dependencias_supervisor/"+documento_supervisor)
 	if response, err := helpers.GetJsonWSO2Test(beego.AppConfig.String("UrlAdministrativaJBPM")+"/dependencias_supervisor/"+documento_supervisor, &respuesta_peticion); err == nil && response == 200 {
 		if respuesta_peticion != nil {
 			if dependenciasMap, ok := respuesta_peticion["dependencias"].(map[string]interface{}); ok {

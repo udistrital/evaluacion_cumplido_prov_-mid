@@ -74,11 +74,11 @@
         }
     },
     "definitions": {
-        "6533.0xc0003fcc30.false": {
+        "6533.0xc0003c7770.false": {
             "title": "false",
             "type": "object"
         },
-        "6623.0xc0003fcc90.false": {
+        "6623.0xc0003c77d0.false": {
             "title": "false",
             "type": "object"
         },
@@ -97,13 +97,13 @@
                 "Evaluadores": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/6533.0xc0003fcc30.false"
+                        "$ref": "#/definitions/6533.0xc0003c7770.false"
                     }
                 },
                 "Resultados": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/6623.0xc0003fcc90.false"
+                        "$ref": "#/definitions/6623.0xc0003c77d0.false"
                     }
                 }
             }

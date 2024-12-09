@@ -202,21 +202,21 @@ func ProcesarResultadosEvaluaciones(evaluadores []models.AsignacionEvaluador) (r
 		}
 
 		for _, item := range resultado.ResultadosIndividuales {
-			pregunta := item.Respuesta.Pregunta
-			cumplimiento := item.Respuesta.Cumplimiento
+			pregunta := strings.TrimSpace(strings.ToUpper(item.Respuesta.Pregunta))
+			cumplimiento := strings.TrimSpace(strings.ToUpper(item.Respuesta.Cumplimiento))
 			valorAsignado := item.Respuesta.ValorAsignado
 
 			// Inicializar la pregunta si no existe
 			if _, exists := resultadosPorPregunta[pregunta]; !exists {
 
 				if strings.ToUpper(item.Categoria) == "GESTIÓN" && strings.ToUpper(item.Titulo) == "PROCEDIMIENTOS" {
-					resultadosPorPregunta[pregunta] = map[string]float64{"Excelente": 0.0, "Bueno": 0.0, "Regular": 0.0, "Malo": 0.0}
-					valorAsignadoPorPregunta[pregunta] = map[string]int{"Excelente": 0, "Bueno": 0, "Regular": 0, "Malo": 0}
-					categoriaTituloPorPregunta[pregunta] = map[string]string{"Categoria": item.Categoria, "Titulo": item.Titulo}
+					resultadosPorPregunta[pregunta] = map[string]float64{"EXCELENTE": 0.0, "BUENO": 0.0, "REGULAR": 0.0, "MALO": 0.0}
+					valorAsignadoPorPregunta[pregunta] = map[string]int{"EXCELENTE": 0, "BUENO": 0, "REGULAR": 0, "MALO": 0}
+					categoriaTituloPorPregunta[pregunta] = map[string]string{"Categoria": strings.ToUpper(item.Categoria), "Titulo": strings.ToUpper(item.Titulo)}
 				} else {
-					resultadosPorPregunta[pregunta] = map[string]float64{"Si": 0.0, "No": 0.0}
-					valorAsignadoPorPregunta[pregunta] = map[string]int{"Si": 0, "No": 0}
-					categoriaTituloPorPregunta[pregunta] = map[string]string{"Categoria": item.Categoria, "Titulo": item.Titulo}
+					resultadosPorPregunta[pregunta] = map[string]float64{"SI": 0.0, "NO": 0.0}
+					valorAsignadoPorPregunta[pregunta] = map[string]int{"SI": 0, "NO": 0}
+					categoriaTituloPorPregunta[pregunta] = map[string]string{"Categoria": strings.ToUpper(item.Categoria), "Titulo": strings.ToUpper(item.Titulo)}
 				}
 			}
 
@@ -227,7 +227,7 @@ func ProcesarResultadosEvaluaciones(evaluadores []models.AsignacionEvaluador) (r
 			valorAsignadoPorPregunta[pregunta][cumplimiento] = valorAsignado
 
 			//Registar las respuestas del supervisor
-			if evaluador.RolAsignacionEvaluadorId.CodigoAbreviacion == "SPR" {
+			if evaluador.RolAsignacionEvaluadorId.CodigoAbreviacion == "SP" {
 				supervisorRespuestas[pregunta] = cumplimiento
 			}
 
@@ -249,7 +249,6 @@ func ProcesarResultadosEvaluaciones(evaluadores []models.AsignacionEvaluador) (r
 		var respuestaFinal string
 		var mayorPuntaje float64
 		empatados := []string{}
-
 		// Evaluar las opciones disponibles
 		for opcion, puntaje := range votos {
 			if puntaje > mayorPuntaje {
