@@ -5,6 +5,35 @@
     },
     "basePath": "/v1",
     "paths": {
+        "/pruebas/{evaluacion_id}": {
+            "get": {
+                "tags": [
+                    "pruebas"
+                ],
+                "description": "Crea el pdf de la evaluación",
+                "operationId": "DocumentoEvaluacionController.GenerarDocumentoEvaluacion",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "description": "Id de la evaluación",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResultadoFinalEvaluacion"
+                        }
+                    },
+                    "404": {
+                        "description": "{object} map[string]interface{}"
+                    }
+                }
+            }
+        },
         "/resultado/resultado-evaluacion": {
             "post": {
                 "tags": [
@@ -45,6 +74,14 @@
         }
     },
     "definitions": {
+        "6533.0xc0003af770.false": {
+            "title": "false",
+            "type": "object"
+        },
+        "6623.0xc0003af7d0.false": {
+            "title": "false",
+            "type": "object"
+        },
         "BodyResultadoEvaluacion": {
             "title": "BodyResultadoEvaluacion",
             "type": "object"
@@ -52,6 +89,24 @@
         "models.CambioEstadoCumplidoResponse": {
             "title": "CambioEstadoCumplidoResponse",
             "type": "object"
+        },
+        "models.ResultadoFinalEvaluacion": {
+            "title": "ResultadoFinalEvaluacion",
+            "type": "object",
+            "properties": {
+                "Evaluadores": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/6533.0xc0003af770.false"
+                    }
+                },
+                "Resultados": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/6623.0xc0003af7d0.false"
+                    }
+                }
+            }
         }
     }
 }
