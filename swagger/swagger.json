@@ -5,10 +5,10 @@
     },
     "basePath": "/v1",
     "paths": {
-        "/pruebas/{evaluacion_id}": {
+        "/resultado-final-evaluacion/{evaluacion_id}": {
             "get": {
                 "tags": [
-                    "pruebas"
+                    "resultado-final-evaluacion"
                 ],
                 "description": "Crea el pdf de la evaluación",
                 "operationId": "DocumentoEvaluacionController.GenerarDocumentoEvaluacion",
@@ -74,11 +74,11 @@
         }
     },
     "definitions": {
-        "6533.0xc0003af770.false": {
+        "6533.0xc0003fcc30.false": {
             "title": "false",
             "type": "object"
         },
-        "6623.0xc0003af7d0.false": {
+        "6623.0xc0003fcc90.false": {
             "title": "false",
             "type": "object"
         },
@@ -97,13 +97,13 @@
                 "Evaluadores": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/6533.0xc0003af770.false"
+                        "$ref": "#/definitions/6533.0xc0003fcc30.false"
                     }
                 },
                 "Resultados": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/6623.0xc0003af7d0.false"
+                        "$ref": "#/definitions/6623.0xc0003fcc90.false"
                     }
                 }
             }
