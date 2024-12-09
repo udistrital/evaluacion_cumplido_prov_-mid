@@ -7,7 +7,7 @@ import (
 type AsignacionEvaluador struct {
 	Id                       int                     `orm:"column(id);pk;auto"`
 	EvaluacionId             *Evaluacion             `orm:"column(evaluacion_id);rel(fk)"`
-	PersonaId                int                     `orm:"column(persona_id)"`
+	PersonaId                string                  `orm:"column(persona_id)"`
 	Cargo                    string                  `orm:"column(cargo)"`
 	PorcentajeEvaluacion     float64                 `orm:"column(porcentaje_evaluacion)"`
 	RolAsignacionEvaluadorId *RolAsignacionEvaluador `orm:"column(rol_asignacion_evaluador_id);rel(fk)"`
