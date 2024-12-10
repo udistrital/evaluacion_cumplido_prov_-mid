@@ -8,5 +8,5 @@ type AsignacionEvaluacion struct {
 	NumeroContrato         string `json:"NumeroContrato"`
 	VigenciaContrato       string `json:"VigenciaContrato"`
 	EvaluacionId           int    `json:"EvaluacionId"`
-	Estado                 bool   `json:"Estado"`
+	Estado                 string `json:"Estado"`
 }
