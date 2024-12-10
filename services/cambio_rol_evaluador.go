@@ -195,7 +195,7 @@ func verificarRolEvaluador(documento string) (activo bool, autenticacionResponse
 	if response := helpers.SendJson(beego.AppConfig.String("UrlAutenticacionMid")+"/token/documentoToken", "POST", &autenticacionResponse, peticionAutenticacion); response == nil {
 
 		for _, rol := range autenticacionResponse.Role {
-			if rol == "Evaluador" {
+			if rol == "EVALUADOR_CUMPLIDO_PROV" {
 				activo = true
 				break
 			} else {
