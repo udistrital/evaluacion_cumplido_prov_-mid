@@ -9,9 +9,9 @@ import (
 func init() {
 	beego.ErrorController(&errorhandler.ErrorHandlerController{})
 	ns := beego.NewNamespace("/v1",
-		beego.NSNamespace("/test",
+		beego.NSNamespace("/carga-data-excel",
 			beego.NSInclude(
-				&controllers.TestController{},
+				&controllers.CargaDataExcelController{},
 			),
 		),
 		beego.NSNamespace("/resultado",
@@ -21,6 +21,9 @@ func init() {
 		), beego.NSNamespace("/resultado-final-evaluacion",
 			beego.NSInclude(
 				&controllers.DocumentoEvaluacionController{},
+		), beego.NSNamespace("/consultar-asignaciones",
+			beego.NSInclude(
+				&controllers.ConsultarAsignacionesController{},
 			),
 		))
 

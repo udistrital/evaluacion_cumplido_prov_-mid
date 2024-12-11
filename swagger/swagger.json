@@ -19,6 +19,27 @@
                         "description": "Id de la evaluación",
                         "required": true,
                         "type": "string"
+        "/carga-data-excel/upload": {
+            "post": {
+                "tags": [
+                    "carga-data-excel"
+                ]
+            }
+        },
+        "/consultar-asignaciones/{numeroDocumento}": {
+            "get": {
+                "tags": [
+                    "consultar-asignaciones"
+                ],
+                "operationId": "ConsultarAsignacionesController.ConsultarAsignaciones por documento supervisor",
+                "parameters": [
+                    {
+                        "in": "de",
+                        "name": "Nmero",
+                        "description": "path",
+                        "schema": {
+                            "$ref": "#/definitions/numeroDocumento"
+                        }
                     }
                 ],
                 "responses": {
@@ -26,6 +47,7 @@
                         "description": "",
                         "schema": {
                             "$ref": "#/definitions/models.ResultadoFinalEvaluacion"
+                            "$ref": "#/definitions/models.CambioEstadoCumplidoResponse"
                         }
                     },
                     "404": {
@@ -39,7 +61,7 @@
                 "tags": [
                     "resultado"
                 ],
-                "description": "Guarda el resultado de una evaluación de cumplimiento de proveedor",
+                "description": "Guarda el resultado de una evaluación de cumplimiento de proveedor\n\u003cbr\u003e",
                 "operationId": "ResultadoEvaluacionController.GuardarResultadoEvaluacion",
                 "parameters": [
                     {
@@ -63,13 +85,6 @@
                         "description": "{object} map[string]interface{}"
                     }
                 }
-            }
-        },
-        "/test/ping": {
-            "get": {
-                "tags": [
-                    "test"
-                ]
             }
         }
     },
@@ -107,6 +122,19 @@
                     }
                 }
             }
+        "numeroDocumento": {
+            "title": "numeroDocumento",
+            "type": "object"
         }
-    }
+    },
+    "tags": [
+        {
+            "name": "carga-data-excel",
+            "description": "Carga-Data-ExcelController operations for Carga-Data-Excel\n"
+        },
+        {
+            "name": "consultar-asignaciones",
+            "description": "Consultar-Asignaciones-Controller operations for Consultar-Asignaciones-Controller\n"
+        }
+    ]
 }
