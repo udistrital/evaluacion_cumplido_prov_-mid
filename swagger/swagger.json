@@ -5,6 +5,35 @@
     },
     "basePath": "/v1",
     "paths": {
+        "/informacion-evaluacion/{asignacion_id}": {
+            "get": {
+                "tags": [
+                    "informacion-evaluacion"
+                ],
+                "description": "get InformacionEvaluacionController by asignacion_id",
+                "operationId": "InformacionEvaluacionController.ObtenerInformacionEvaluacion",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "description": "The key for staticblock",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/models.InformacionEvaluacion"
+                        }
+                    },
+                    "400": {
+                        "description": ":id is empty"
+                    }
+                }
+            }
+        },
         "/resultado-final-evaluacion/{evaluacion_id}": {
             "get": {
                 "tags": [
@@ -74,11 +103,15 @@
         }
     },
     "definitions": {
-        "6533.0xc0003c7770.false": {
+        "1063.0xc0003032f0.false": {
             "title": "false",
             "type": "object"
         },
-        "6623.0xc0003c77d0.false": {
+        "9757.0xc0003303c0.false": {
+            "title": "false",
+            "type": "object"
+        },
+        "9847.0xc000330420.false": {
             "title": "false",
             "type": "object"
         },
@@ -90,6 +123,177 @@
             "title": "CambioEstadoCumplidoResponse",
             "type": "object"
         },
+        "models.Evaluacion": {
+            "title": "Evaluacion",
+            "type": "object",
+            "properties": {
+                "Activo": {
+                    "type": "boolean"
+                },
+                "ContratoSuscritoId": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "FechaCreacion": {
+                    "type": "string",
+                    "format": "datetime"
+                },
+                "FechaModificacion": {
+                    "type": "string",
+                    "format": "datetime"
+                },
+                "Id": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "VigenciaContrato": {
+                    "type": "integer",
+                    "format": "int64"
+                }
+            }
+        },
+        "models.Evaluador": {
+            "title": "Evaluador",
+            "type": "object",
+            "properties": {
+                "Cargo": {
+                    "type": "string"
+                },
+                "Documento": {
+                    "type": "string"
+                },
+                "EstadoEvaluacion": {
+                    "type": "string"
+                },
+                "ItemEvaluado": {
+                    "type": "string"
+                },
+                "Observaciones": {
+                    "type": "string"
+                },
+                "PuntajeEvaluacion": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "Rol": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.InformacionEvaluacion": {
+            "title": "InformacionEvaluacion",
+            "type": "object",
+            "properties": {
+                "Cargo": {
+                    "type": "string"
+                },
+                "Clasificacion": {
+                    "type": "string"
+                },
+                "CodigoAbreviacionRol": {
+                    "type": "string"
+                },
+                "DependenciaEvaluadora": {
+                    "type": "string"
+                },
+                "EmpresaProveedor": {
+                    "type": "string"
+                },
+                "Evaluadores": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Evaluador"
+                    }
+                },
+                "FechaEvaluacion": {
+                    "type": "string"
+                },
+                "ItemsEvaluados": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Item"
+                    }
+                },
+                "NombreEvaluador": {
+                    "type": "string"
+                },
+                "ObjetoContrato": {
+                    "type": "string"
+                },
+                "PuntajeTotalEvaluacion": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "ResultadoEvaluacion": {
+                    "$ref": "#/definitions/models.Resultado"
+                }
+            }
+        },
+        "models.Item": {
+            "title": "Item",
+            "type": "object",
+            "properties": {
+                "Activo": {
+                    "type": "boolean"
+                },
+                "Cantidad": {
+                    "type": "number",
+                    "format": "double"
+                },
+                "EvaluacionId": {
+                    "$ref": "#/definitions/models.Evaluacion"
+                },
+                "FechaCreacion": {
+                    "type": "string",
+                    "format": "datetime"
+                },
+                "FechaModificacion": {
+                    "type": "string",
+                    "format": "datetime"
+                },
+                "FichaTecnica": {
+                    "type": "string"
+                },
+                "Id": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "Identificador": {
+                    "type": "string"
+                },
+                "Iva": {
+                    "type": "number",
+                    "format": "double"
+                },
+                "Nombre": {
+                    "type": "string"
+                },
+                "TipoNecesidad": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "Unidad": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "ValorUnitario": {
+                    "type": "number",
+                    "format": "double"
+                }
+            }
+        },
+        "models.Resultado": {
+            "title": "Resultado",
+            "type": "object",
+            "properties": {
+                "ResultadosIndividuales": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/1063.0xc0003032f0.false"
+                    }
+                }
+            }
+        },
         "models.ResultadoFinalEvaluacion": {
             "title": "ResultadoFinalEvaluacion",
             "type": "object",
@@ -97,16 +301,22 @@
                 "Evaluadores": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/6533.0xc0003c7770.false"
+                        "$ref": "#/definitions/9757.0xc0003303c0.false"
                     }
                 },
                 "Resultados": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/6623.0xc0003c77d0.false"
+                        "$ref": "#/definitions/9847.0xc000330420.false"
                     }
                 }
             }
         }
-    }
+    },
+    "tags": [
+        {
+            "name": "informacion-evaluacion",
+            "description": "InformacionEvaluacionController operations for InformacionEvaluacionController\n"
+        }
+    ]
 }

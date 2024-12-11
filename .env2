@@ -1,0 +1,5 @@
+EVALUACION_CUMPLIDO_PROV_MID_HTTP_PORT=8090
+EVALUACION_CUMPLIDO_PROV_MID_RUN_MODE=dev
+EVALUACIONES_CUMPLIDOS_PROVEEDORES_CRUD=http://localhost:8080/v1
+EVALUACION_CUMPLIDO_PROV_MID_AMAZON_API=http://api.intranetoas.udistrital.edu.co:8104/v1
+EVALUACION_CUMPLIDO_PROV_MID_ADMINISTRATIVA_JBPM=http://busservicios.intranetoas.udistrital.edu.co:8282/wso2eiserver/services/administrativa_produccion
