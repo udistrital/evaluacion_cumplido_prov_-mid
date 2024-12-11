@@ -29,6 +29,11 @@ func init() {
 				&controllers.ConsultarAsignacionesController{},
 			),
 		),
-	)
+		beego.NSNamespace("/cambio-rol-evaluador",
+			beego.NSInclude(
+				&controllers.CambioRolEvaluadorController{},
+			),
+		))
+
 	beego.AddNamespace(ns)
 }
