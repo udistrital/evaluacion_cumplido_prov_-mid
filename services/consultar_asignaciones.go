@@ -76,15 +76,29 @@ func ObtenerListaDeAsignaciones(documento string) (mapResponse map[string]interf
 		contratosDepedencia = append(contratosDepedencia, contratoGeneral...)
 	}
 
-	var listaSinAsignaciones []models.AsignacionEvaluacion
+	listaSinAsignaciones, err := consulartSingAsinganaciones(contratosDepedencia)
+
+	if err != nil {
+		return nil, fmt.Errorf("Error al consultar asignaciones")
+	}
+
+	mapResponse["Asignaciones"] = listaAsignaciones
+	mapResponse["SinAsignaciones"] = limpiarSinAsignaciones(listaAsignaciones, listaSinAsignaciones)
+	return mapResponse, nil
+}
+
+func consulartSingAsinganaciones(contratosDepedencia []models.ContratoGeneral) (listaSinAsignaciones []models.AsignacionEvaluacion, outputError error) {
+
 	for _, contrato := range contratosDepedencia {
+
+		nombre_dependencia, _ := obtenerDependencia(contrato.Supervisor.DependenciaSupervisor)
 
 		var listaProveedor []models.Proveedor
 		if response, err := helpers.GetJsonWSO2Test(beego.AppConfig.String("UrlcrudAgora")+"/informacion_proveedor/?query=Id:"+strconv.Itoa(contrato.Contratista), &listaProveedor); err == nil && response == 200 {
 			asignacionEvaluacion := models.AsignacionEvaluacion{
 				AsignacionEvaluacionId: 0,
 				NombreProveedor:        listaProveedor[0].NomProveedor,
-				Dependencia:            contrato.DependenciaSolicitante,
+				Dependencia:            nombre_dependencia,
 				TipoContrato:           contrato.TipoContrato.TipoContrato,
 				NumeroContrato:         contrato.ContratoSuscrito[0].NumeroContratoSuscrito,
 				VigenciaContrato:       strconv.Itoa(contrato.VigenciaContrato),
@@ -98,14 +112,7 @@ func ObtenerListaDeAsignaciones(documento string) (mapResponse map[string]interf
 
 		}
 	}
-
-	if err != nil {
-		return nil, fmt.Errorf("Error al consultar asignaciones")
-	}
-
-	mapResponse["Asignaciones"] = listaAsignaciones
-	mapResponse["SinAsignaciones"] = limpiarSinAsignaciones(listaAsignaciones, listaSinAsignaciones)
-	return mapResponse, nil
+	return listaSinAsignaciones, nil
 }
 
 func consultarAsignaciones(documento string) (asignaciones []models.AsignacionEvaluador, outputError error) {
@@ -181,10 +188,13 @@ func obtenerProveedor(contratistaId int, asignacion models.AsignacionEvaluador, 
 			return asisgnaciones, fmt.Errorf("Error al consultar estado de asignaciones")
 
 		}
+
+		nombre_dependencia, _ := obtenerDependencia(contratoGeneral.Supervisor.DependenciaSupervisor)
+
 		asignacionEvaluacion := models.AsignacionEvaluacion{
 			AsignacionEvaluacionId: asignacion.Id,
 			NombreProveedor:        listaProveedor[0].NomProveedor,
-			Dependencia:            contratoGeneral.DependenciaSolicitante,
+			Dependencia:            nombre_dependencia,
 			TipoContrato:           contratoGeneral.TipoContrato.TipoContrato,
 			NumeroContrato:         contratoGeneral.ContratoSuscrito[0].NumeroContratoSuscrito,
 			VigenciaContrato:       strconv.Itoa(contratoGeneral.VigenciaContrato),
@@ -279,4 +289,24 @@ func obtenerEstadoAsignacionEvaluacion(ContratoSuscritoId, VigenciaContrato stri
 	}
 	fmt.Println("Lista de cambios de estado", listaCambiosEstado[0].EstadoAsignacionEvaluador.Nombre)
 	return listaCambiosEstado, nil
+}
+
+func obtenerDependencia(codigoDependencia string) (nombreDependencia string, outputError error) {
+	defer func() {
+		if err := recover(); err != nil {
+			outputError = fmt.Errorf("%v", err)
+			panic(outputError)
+		}
+	}()
+	query := fmt.Sprintf("/dependencia_SIC/?query=ESFCODIGODEP:%s&limit=1", codigoDependencia)
+	fmt.Print(beego.AppConfig.String("UrlcrudAgora") + query)
+	var dependencia []models.DependenciaSic
+	if response, err := helpers.GetJsonWSO2Test(beego.AppConfig.String("UrlcrudAgora")+query, &dependencia); err == nil && response == 200 {
+		nombreDependencia = dependencia[0].ESFDEPENCARGADA
+	} else {
+		return nombreDependencia, fmt.Errorf("Error al consultar dependencia")
+	}
+
+	return nombreDependencia, nil
+
 }

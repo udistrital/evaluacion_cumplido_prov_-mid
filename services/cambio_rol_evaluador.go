@@ -209,3 +209,4 @@ func verificarRolEvaluador(documento string) (activo bool, autenticacionResponse
 
 	return activo, autenticacionResponse, nil
 }
+
