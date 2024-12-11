@@ -93,7 +93,7 @@ func consulartSingAsinganaciones(contratosDepedencia []models.ContratoGeneral) (
 
 		nombre_dependencia, _ := obtenerDependencia(contrato.Supervisor.DependenciaSupervisor)
 
-		var listaProveedor []models.Proveedor
+		var listaProveedor []models.InformacionProveedor
 		if response, err := helpers.GetJsonWSO2Test(beego.AppConfig.String("UrlcrudAgora")+"/informacion_proveedor/?query=Id:"+strconv.Itoa(contrato.Contratista), &listaProveedor); err == nil && response == 200 {
 			asignacionEvaluacion := models.AsignacionEvaluacion{
 				AsignacionEvaluacionId: 0,
@@ -178,7 +178,7 @@ func obtenerProveedor(contratistaId int, asignacion models.AsignacionEvaluador, 
 		}
 	}()
 
-	var listaProveedor []models.Proveedor
+	var listaProveedor []models.InformacionProveedor
 	contratoGeneral := listaContratoGeneral[0]
 
 	if response, err := helpers.GetJsonWSO2Test(beego.AppConfig.String("UrlcrudAgora")+"/informacion_proveedor/?query=Id:"+strconv.Itoa(contratistaId), &listaProveedor); err == nil && response == 200 {
@@ -274,7 +274,7 @@ func obtenerEstadoAsignacionEvaluacion(ContratoSuscritoId, VigenciaContrato stri
 			panic(outputError)
 		}
 	}()
-	var query = fmt.Sprintf("/cambio_estado_asignacion_evaluador/?query=AsignacionEvaluadorId.EvaluacionId.ContratoSuscritoId:%s,AsignacionEvaluadorId.EvaluacionId.VigenciaContrato:%s,Activo:%t", ContratoSuscritoId, VigenciaContrato, activo)
+	var query = fmt.Sprintf("/ambio_estado_asignacion_evaluador/?query=AsignacionEvaluadorId.EvaluacionId.ContratoSuscritoId:%s,AsignacionEvaluadorId.EvaluacionId.VigenciaContrato:%s,Activo:%t", ContratoSuscritoId, VigenciaContrato, activo)
 
 	var respuestaPeticion map[string]interface{}
 	listaCambiosEstado = make([]models.CambioEstadoASignacionEnvaluacion, 0)
@@ -283,11 +283,9 @@ func obtenerEstadoAsignacionEvaluacion(ContratoSuscritoId, VigenciaContrato stri
 
 		helpers.LimpiezaRespuestaRefactor(respuestaPeticion, &listaCambiosEstado)
 	} else {
-		fmt.Print("Error al consultar cambios de estado")
 		return listaCambiosEstado, fmt.Errorf("Error al consultar cambios de estado")
 
 	}
-	fmt.Println("Lista de cambios de estado", listaCambiosEstado[0].EstadoAsignacionEvaluador.Nombre)
 	return listaCambiosEstado, nil
 }
 

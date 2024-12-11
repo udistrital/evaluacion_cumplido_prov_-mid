@@ -5,20 +5,35 @@
     },
     "basePath": "/v1",
     "paths": {
-        "/resultado-final-evaluacion/{evaluacion_id}": {
-            "get": {
+        "/cambio-rol-evaluador/{idEvaluacion}": {
+            "post": {
                 "tags": [
-                    "resultado-final-evaluacion"
+                    "cambio-rol-evaluador"
                 ],
-                "description": "Crea el pdf de la evaluación",
-                "operationId": "DocumentoEvaluacionController.GenerarDocumentoEvaluacion",
+                "operationId": "CambioRolEvaluadorController.CambiarRolAsignacionEvaluador",
                 "parameters": [
                     {
-                        "in": "path",
-                        "name": "id",
-                        "description": "Id de la evaluación",
-                        "required": true,
-                        "type": "string"
+                        "in": "de",
+                        "name": "Nmero",
+                        "description": "path",
+                        "schema": {
+                            "$ref": "#/definitions/idEvaluacion"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/models.CambioEstadoCumplidoResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "{object} map[string]interface{}"
+                    }
+                }
+            }
+        },
         "/carga-data-excel/upload": {
             "post": {
                 "tags": [
@@ -46,8 +61,36 @@
                     "200": {
                         "description": "",
                         "schema": {
-                            "$ref": "#/definitions/models.ResultadoFinalEvaluacion"
                             "$ref": "#/definitions/models.CambioEstadoCumplidoResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "{object} map[string]interface{}"
+                    }
+                }
+            }
+        },
+        "/resultado-final-evaluacion/{evaluacion_id}": {
+            "get": {
+                "tags": [
+                    "resultado-final-evaluacion"
+                ],
+                "description": "Crea el pdf de la evaluación\n\u003cbr\u003e",
+                "operationId": "DocumentoEvaluacionController.GenerarDocumentoEvaluacion",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "description": "Id de la evaluación",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResultadoFinalEvaluacion"
                         }
                     },
                     "404": {
@@ -89,16 +132,20 @@
         }
     },
     "definitions": {
-        "6533.0xc0003c7770.false": {
+        "10169.0xc000510b40.false": {
             "title": "false",
             "type": "object"
         },
-        "6623.0xc0003c77d0.false": {
+        "10265.0xc000510ba0.false": {
             "title": "false",
             "type": "object"
         },
         "BodyResultadoEvaluacion": {
             "title": "BodyResultadoEvaluacion",
+            "type": "object"
+        },
+        "idEvaluacion": {
+            "title": "idEvaluacion",
             "type": "object"
         },
         "models.CambioEstadoCumplidoResponse": {
@@ -112,16 +159,17 @@
                 "Evaluadores": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/6533.0xc0003c7770.false"
+                        "$ref": "#/definitions/10169.0xc000510b40.false"
                     }
                 },
                 "Resultados": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/6623.0xc0003c77d0.false"
+                        "$ref": "#/definitions/10265.0xc000510ba0.false"
                     }
                 }
             }
+        },
         "numeroDocumento": {
             "title": "numeroDocumento",
             "type": "object"
