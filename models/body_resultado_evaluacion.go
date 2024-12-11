@@ -13,7 +13,7 @@ type Resultado struct {
 		Titulo    string `json:"Titulo"`
 		Respuesta struct {
 			Pregunta      string `json:"Pregunta"`
-			Cumplimiento  bool   `json:"Cumplimiento"`
+			Cumplimiento  string `json:"Cumplimiento"`
 			ValorAsignado int    `json:"ValorAsignado"`
 		} `json:"Respuesta"`
 	} `json:"ResultadosIndividuales"`

@@ -5,6 +5,20 @@
     },
     "basePath": "/v1",
     "paths": {
+        "/resultado-final-evaluacion/{evaluacion_id}": {
+            "get": {
+                "tags": [
+                    "resultado-final-evaluacion"
+                ],
+                "description": "Crea el pdf de la evaluación",
+                "operationId": "DocumentoEvaluacionController.GenerarDocumentoEvaluacion",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "description": "Id de la evaluación",
+                        "required": true,
+                        "type": "string"
         "/carga-data-excel/upload": {
             "post": {
                 "tags": [
@@ -32,6 +46,7 @@
                     "200": {
                         "description": "",
                         "schema": {
+                            "$ref": "#/definitions/models.ResultadoFinalEvaluacion"
                             "$ref": "#/definitions/models.CambioEstadoCumplidoResponse"
                         }
                     },
@@ -74,6 +89,14 @@
         }
     },
     "definitions": {
+        "6533.0xc0003c7770.false": {
+            "title": "false",
+            "type": "object"
+        },
+        "6623.0xc0003c77d0.false": {
+            "title": "false",
+            "type": "object"
+        },
         "BodyResultadoEvaluacion": {
             "title": "BodyResultadoEvaluacion",
             "type": "object"
@@ -82,6 +105,23 @@
             "title": "CambioEstadoCumplidoResponse",
             "type": "object"
         },
+        "models.ResultadoFinalEvaluacion": {
+            "title": "ResultadoFinalEvaluacion",
+            "type": "object",
+            "properties": {
+                "Evaluadores": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/6533.0xc0003c7770.false"
+                    }
+                },
+                "Resultados": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/6623.0xc0003c77d0.false"
+                    }
+                }
+            }
         "numeroDocumento": {
             "title": "numeroDocumento",
             "type": "object"
