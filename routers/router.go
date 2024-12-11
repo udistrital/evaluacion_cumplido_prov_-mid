@@ -18,14 +18,17 @@ func init() {
 			beego.NSInclude(
 				&controllers.ResultadoEvaluacionController{},
 			),
-		), beego.NSNamespace("/resultado-final-evaluacion",
+		),
+		beego.NSNamespace("/resultado-final-evaluacion",
 			beego.NSInclude(
 				&controllers.DocumentoEvaluacionController{},
-		), beego.NSNamespace("/consultar-asignaciones",
+			),
+		),
+		beego.NSNamespace("/consultar-asignaciones",
 			beego.NSInclude(
 				&controllers.ConsultarAsignacionesController{},
 			),
-		))
-
+		),
+	)
 	beego.AddNamespace(ns)
 }
