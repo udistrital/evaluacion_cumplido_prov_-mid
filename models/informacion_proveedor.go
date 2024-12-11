@@ -1,34 +1,34 @@
 package models
 
 type Estado struct {
-	Id                   int    `json:"Id"`
-	ClaseParametro       string `json:"ClaseParametro"`
-	ValorParametro       string `json:"ValorParametro"`
-	DescripcionParametro string `json:"DescripcionParametro"`
-	Abreviatura          string `json:"Abreviatura"`
+	Id                   int
+	ClaseParametro       string
+	ValorParametro       string
+	DescripcionParametro string
+	Abreviatura          string
 }
 
-type Proveedor struct {
-	Id                      int    `json:"Id"`
-	Tipopersona             string `json:"Tipopersona"`
-	NumDocumento            string `json:"NumDocumento"`
-	IdCiudadContacto        int    `json:"IdCiudadContacto"`
-	Direccion               string `json:"Direccion"`
-	Correo                  string `json:"Correo"`
-	Web                     string `json:"Web"`
-	NomAsesor               string `json:"NomAsesor"`
-	TelAsesor               string `json:"TelAsesor"`
-	Descripcion             string `json:"Descripcion"`
-	PuntajeEvaluacion       int    `json:"PuntajeEvaluacion"`
-	ClasificacionEvaluacion string `json:"ClasificacionEvaluacion"`
-	Estado                  Estado `json:"Estado"`
-	TipoCuentaBancaria      string `json:"TipoCuentaBancaria"`
-	NumCuentaBancaria       string `json:"NumCuentaBancaria"`
-	IdEntidadBancaria       int    `json:"IdEntidadBancaria"`
-	FechaRegistro           string `json:"FechaRegistro"`
-	FechaUltimaModificacion string `json:"FechaUltimaModificacion"`
-	NomProveedor            string `json:"NomProveedor"`
-	Anexorut                string `json:"Anexorut"`
-	Anexorup                string `json:"Anexorup"`
-	RegimenContributivo     string `json:"RegimenContributivo"`
+type InformacionProveedor struct {
+	Id                      int
+	Tipopersona             string
+	NumDocumento            string
+	IdCiudadContacto        float64
+	Direccion               string
+	Correo                  string
+	Web                     string
+	NomAsesor               string
+	TelAsesor               string
+	Descripcion             string
+	PuntajeEvaluacion       float64
+	ClasificacionEvaluacion string
+	Estado                  *Estado
+	TipoCuentaBancaria      string
+	NumCuentaBancaria       string
+	IdEntidadBancaria       float64
+	FechaRegistro           string
+	FechaUltimaModificacion string
+	NomProveedor            string
+	Anexorut                string
+	Anexorup                string
+	RegimenContributivo     string
 }

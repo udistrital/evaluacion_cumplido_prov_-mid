@@ -1,9 +1,11 @@
 package models
 
-type RolAsignacionEvaluador struct {
+type Clasificacion struct {
 	Id                int
 	Nombre            string
-	Descripcion       string
 	CodigoAbreviacion string
+	Descripcion       string
+	LimiteInferior    int
+	LimiteSuperior    int
 	Activo            bool
 }

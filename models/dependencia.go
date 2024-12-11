@@ -1,12 +1,12 @@
 package models
 
 type Dependencia struct {
-	Codigo string `json:"codigo"`
-	Nombre string `json:"nombre"`
+	Codigo string
+	Nombre string
 }
 
 type DependenciaLista struct {
-	Dependencias []Dependencia `json:"dependencia"`
+	Dependencias []Dependencia
 }
 
 type DependenciasRespuesta struct {
