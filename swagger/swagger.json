@@ -5,6 +5,42 @@
     },
     "basePath": "/v1",
     "paths": {
+        "/carga-data-excel/upload": {
+            "post": {
+                "tags": [
+                    "carga-data-excel"
+                ]
+            }
+        },
+        "/consultar-asignaciones/{numeroDocumento}": {
+            "get": {
+                "tags": [
+                    "consultar-asignaciones"
+                ],
+                "operationId": "ConsultarAsignacionesController.ConsultarAsignaciones por documento supervisor",
+                "parameters": [
+                    {
+                        "in": "de",
+                        "name": "Nmero",
+                        "description": "path",
+                        "schema": {
+                            "$ref": "#/definitions/numeroDocumento"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/models.CambioEstadoCumplidoResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "{object} map[string]interface{}"
+                    }
+                }
+            }
+        },
         "/evaluacion-cumplido/{evaluacion_id}": {
             "get": {
                 "tags": [
@@ -128,25 +164,18 @@
                     }
                 }
             }
-        },
-        "/test/ping": {
-            "get": {
-                "tags": [
-                    "test"
-                ]
-            }
         }
     },
     "definitions": {
-        "1066.0xc0003b1f20.false": {
+        "11579.0xc000411020.false": {
             "title": "false",
             "type": "object"
         },
-        "10790.0xc000411140.false": {
+        "11669.0xc000411080.false": {
             "title": "false",
             "type": "object"
         },
-        "10880.0xc0004111a0.false": {
+        "1452.0xc0003add40.false": {
             "title": "false",
             "type": "object"
         },
@@ -360,7 +389,7 @@
                 "ResultadosIndividuales": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/1066.0xc0003b1f20.false"
+                        "$ref": "#/definitions/1452.0xc0003add40.false"
                     }
                 }
             }
@@ -372,19 +401,27 @@
                 "Evaluadores": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/10790.0xc000411140.false"
+                        "$ref": "#/definitions/11579.0xc000411020.false"
                     }
                 },
                 "Resultados": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/10880.0xc0004111a0.false"
+                        "$ref": "#/definitions/11669.0xc000411080.false"
                     }
                 }
             }
+        },
+        "numeroDocumento": {
+            "title": "numeroDocumento",
+            "type": "object"
         }
     },
     "tags": [
+        {
+            "name": "carga-data-excel",
+            "description": "Carga-Data-ExcelController operations for Carga-Data-Excel\n"
+        },
         {
             "name": "informacion-evaluacion",
             "description": "InformacionEvaluacionController operations for InformacionEvaluacionController\n"
@@ -392,6 +429,10 @@
         {
             "name": "evaluacion-cumplido",
             "description": "EvaluacionCumplidoController handles operations for uploading evaluations\nto completed contracts.\n"
+        },
+        {
+            "name": "consultar-asignaciones",
+            "description": "Consultar-Asignaciones-Controller operations for Consultar-Asignaciones-Controller\n"
         }
     ]
 }

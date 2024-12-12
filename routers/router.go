@@ -9,16 +9,17 @@ import (
 func init() {
 	beego.ErrorController(&errorhandler.ErrorHandlerController{})
 	ns := beego.NewNamespace("/v1",
-		beego.NSNamespace("/test",
+		beego.NSNamespace("/carga-data-excel",
 			beego.NSInclude(
-				&controllers.TestController{},
+				&controllers.CargaDataExcelController{},
 			),
 		),
 		beego.NSNamespace("/resultado",
 			beego.NSInclude(
 				&controllers.ResultadoEvaluacionController{},
 			),
-		), beego.NSNamespace("/resultado-final-evaluacion",
+		),
+		beego.NSNamespace("/resultado-final-evaluacion",
 			beego.NSInclude(
 				&controllers.DocumentoEvaluacionController{},
 			),
@@ -27,9 +28,15 @@ func init() {
 			beego.NSInclude(
 				&controllers.InformacionEvaluacionController{},
 			),
-		), beego.NSNamespace("/evaluacion-cumplido",
+		),
+		beego.NSNamespace("/evaluacion-cumplido",
 			beego.NSInclude(
 				&controllers.EvaluacionCumplidoController{},
+			),
+		),
+		beego.NSNamespace("/consultar-asignaciones",
+			beego.NSInclude(
+				&controllers.ConsultarAsignacionesController{},
 			),
 		))
 
