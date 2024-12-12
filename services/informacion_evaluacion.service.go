@@ -28,8 +28,7 @@ func ObtenerInformacionEvaluacion(asignacion_evaluacion_id string) (informacion_
 		return informacion_evaluacion, outputError
 	}
 
-	data := respuesta_asignacion_evaluador["Data"].([]interface{})
-	if len(data[0].(map[string]interface{})) == 0 {
+	if len(respuesta_asignacion_evaluador) == 0 {
 		outputError = fmt.Errorf(fmt.Sprintf("No se encontró la asignación del evaluador con el id %s", asignacion_evaluacion_id))
 		return informacion_evaluacion, outputError
 	}
@@ -37,7 +36,7 @@ func ObtenerInformacionEvaluacion(asignacion_evaluacion_id string) (informacion_
 	helpers.LimpiezaRespuestaRefactor(respuesta_asignacion_evaluador, &asignacion_evaluadores)
 
 	// Obtener el nombre del evaluador
-	nombre_evaluador, error := helpers.ObtenerNombrePersonaNatural(strconv.Itoa(asignacion_evaluadores[0].PersonaId))
+	nombre_evaluador, error := helpers.ObtenerNombrePersonaNatural(asignacion_evaluadores[0].PersonaId)
 	if error != nil {
 		outputError = fmt.Errorf(error.Error())
 		return informacion_evaluacion, outputError
@@ -162,7 +161,8 @@ func ObtenerEvaluadores(asignacion_evaluador models.AsignacionEvaluador) (evalua
 		for _, evaluador := range evaluadores_asignacion {
 			var datos_evaluador models.Evaluador
 			datos_evaluador.Rol = evaluador.RolAsignacionEvaluadorId.CodigoAbreviacion
-			datos_evaluador.Documento = strconv.Itoa(evaluador.PersonaId)
+			datos_evaluador.PorcentajeEvaluacion = evaluador.PorcentajeEvaluacion
+			datos_evaluador.Documento = evaluador.PersonaId
 			datos_evaluador.Cargo = evaluador.Cargo
 			var respuesta_cambio_estado_asignacion_evaluador map[string]interface{}
 			var cambio_estado_asignacion_evaluador []models.CambioEstadoAsignacionEvaluador
@@ -173,7 +173,7 @@ func ObtenerEvaluadores(asignacion_evaluador models.AsignacionEvaluador) (evalua
 				return evaluadores, outputError
 			}
 
-			if len(respuesta_cambio_estado_asignacion_evaluador) == 0 {
+			if respuesta_cambio_estado_asignacion_evaluador["Data"] == nil {
 				datos_evaluador.EstadoEvaluacion = ""
 			} else {
 				helpers.LimpiezaRespuestaRefactor(respuesta_cambio_estado_asignacion_evaluador, &cambio_estado_asignacion_evaluador)
@@ -214,8 +214,10 @@ func ObtenerEvaluadores(asignacion_evaluador models.AsignacionEvaluador) (evalua
 		}
 	} else {
 		var datos_evaluador models.Evaluador
-		datos_evaluador.Documento = strconv.Itoa(asignacion_evaluador.PersonaId)
+		datos_evaluador.Documento = asignacion_evaluador.PersonaId
 		datos_evaluador.Cargo = asignacion_evaluador.Cargo
+		datos_evaluador.Rol = asignacion_evaluador.RolAsignacionEvaluadorId.CodigoAbreviacion
+		datos_evaluador.PorcentajeEvaluacion = asignacion_evaluador.PorcentajeEvaluacion
 		var respuesta_cambio_estado_asignacion_evaluador map[string]interface{}
 		var cambio_estado_asignacion_evaluador []models.CambioEstadoAsignacionEvaluador
 
@@ -225,7 +227,7 @@ func ObtenerEvaluadores(asignacion_evaluador models.AsignacionEvaluador) (evalua
 			return evaluadores, outputError
 		}
 
-		if len(respuesta_cambio_estado_asignacion_evaluador) == 0 {
+		if respuesta_cambio_estado_asignacion_evaluador["Data"] == nil {
 			datos_evaluador.EstadoEvaluacion = ""
 		} else {
 			helpers.LimpiezaRespuestaRefactor(respuesta_cambio_estado_asignacion_evaluador, &cambio_estado_asignacion_evaluador)
