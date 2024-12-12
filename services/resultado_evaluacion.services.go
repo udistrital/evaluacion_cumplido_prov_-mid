@@ -105,7 +105,7 @@ func ProcesarResultadosEvaluaciones(evaluadores []models.AsignacionEvaluador) (r
 	// Obtener el resultado de la evaluacion de cada evaluador
 
 	for _, evaluador := range evaluadores {
-		nombre_persona, error := helpers.ObtenerNombrePersonaNatural(strconv.Itoa(evaluador.PersonaId))
+		nombre_persona, error := helpers.ObtenerNombrePersonaNatural(evaluador.PersonaId)
 		if error != nil {
 			outputError = fmt.Errorf(error.Error())
 			return resultados_finales, outputError

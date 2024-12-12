@@ -16,11 +16,12 @@ type InformacionEvaluacion struct {
 }
 
 type Evaluador struct {
-	Documento         string `json:"Documento"`
-	Cargo             string `json:"Cargo"`
-	Rol               string `json:"Rol"`
-	ItemsEvaluados    string `json:"ItemEvaluado"`
-	PuntajeEvaluacion int    `json:"PuntajeEvaluacion"`
-	EstadoEvaluacion  string `json:"EstadoEvaluacion"`
-	Observaciones     string `json:"Observaciones"`
+	Documento            string  `json:"Documento"`
+	Cargo                string  `json:"Cargo"`
+	PorcentajeEvaluacion float64 `json:"PorcentajeEvaluacion"`
+	Rol                  string  `json:"Rol"`
+	ItemsEvaluados       string  `json:"ItemEvaluado"`
+	PuntajeEvaluacion    int     `json:"PuntajeEvaluacion"`
+	EstadoEvaluacion     string  `json:"EstadoEvaluacion"`
+	Observaciones        string  `json:"Observaciones"`
 }

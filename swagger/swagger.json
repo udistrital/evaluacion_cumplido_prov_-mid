@@ -5,6 +5,41 @@
     },
     "basePath": "/v1",
     "paths": {
+        "/evaluacion-cumplido/{evaluacion_id}": {
+            "get": {
+                "tags": [
+                    "evaluacion-cumplido"
+                ],
+                "description": "Upload evaluations to completed contracts by evaluacion_id",
+                "operationId": "EvaluacionCumplidoController.SubirEvaluacionCumplido",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "evaluacion_id",
+                        "description": "ID of the evaluation to upload",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.CumplidoProveedor"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": ":evaluacion_id is invalid"
+                    },
+                    "404": {
+                        "description": "No valid completed contracts found"
+                    }
+                }
+            }
+        },
         "/informacion-evaluacion/{asignacion_id}": {
             "get": {
                 "tags": [
@@ -103,15 +138,15 @@
         }
     },
     "definitions": {
-        "1063.0xc0003032f0.false": {
+        "1066.0xc0003b1f20.false": {
             "title": "false",
             "type": "object"
         },
-        "9757.0xc0003303c0.false": {
+        "10790.0xc000411140.false": {
             "title": "false",
             "type": "object"
         },
-        "9847.0xc000330420.false": {
+        "10880.0xc0004111a0.false": {
             "title": "false",
             "type": "object"
         },
@@ -123,6 +158,34 @@
             "title": "CambioEstadoCumplidoResponse",
             "type": "object"
         },
+        "models.CumplidoProveedor": {
+            "title": "CumplidoProveedor",
+            "type": "object",
+            "properties": {
+                "Activo": {
+                    "type": "boolean"
+                },
+                "FechaCreacion": {
+                    "type": "string",
+                    "format": "datetime"
+                },
+                "FechaModificacion": {
+                    "type": "string",
+                    "format": "datetime"
+                },
+                "Id": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "NumeroContrato": {
+                    "type": "string"
+                },
+                "VigenciaContrato": {
+                    "type": "integer",
+                    "format": "int64"
+                }
+            }
+        },
         "models.Evaluacion": {
             "title": "Evaluacion",
             "type": "object",
@@ -131,6 +194,10 @@
                     "type": "boolean"
                 },
                 "ContratoSuscritoId": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "DocumentoId": {
                     "type": "integer",
                     "format": "int64"
                 },
@@ -170,6 +237,10 @@
                 },
                 "Observaciones": {
                     "type": "string"
+                },
+                "PorcentajeEvaluacion": {
+                    "type": "number",
+                    "format": "double"
                 },
                 "PuntajeEvaluacion": {
                     "type": "integer",
@@ -289,7 +360,7 @@
                 "ResultadosIndividuales": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/1063.0xc0003032f0.false"
+                        "$ref": "#/definitions/1066.0xc0003b1f20.false"
                     }
                 }
             }
@@ -301,13 +372,13 @@
                 "Evaluadores": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/9757.0xc0003303c0.false"
+                        "$ref": "#/definitions/10790.0xc000411140.false"
                     }
                 },
                 "Resultados": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/9847.0xc000330420.false"
+                        "$ref": "#/definitions/10880.0xc0004111a0.false"
                     }
                 }
             }
@@ -317,6 +388,10 @@
         {
             "name": "informacion-evaluacion",
             "description": "InformacionEvaluacionController operations for InformacionEvaluacionController\n"
+        },
+        {
+            "name": "evaluacion-cumplido",
+            "description": "EvaluacionCumplidoController handles operations for uploading evaluations\nto completed contracts.\n"
         }
     ]
 }

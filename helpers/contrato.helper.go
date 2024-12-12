@@ -87,6 +87,11 @@ func ObtenerNombrePersonaNatural(documento_persona string) (nombre_persona strin
 		return nombre_persona, outputError
 	}
 
+	if len(informacion) == 0 {
+		outputError = fmt.Errorf(fmt.Sprintf("No se encontró información de la persona con documento: %s", documento_persona))
+		return nombre_persona, outputError
+	}
+
 	nombre_persona = informacion[0].PrimerNombre + " " + informacion[0].SegundoNombre + " " + informacion[0].PrimerApellido + " " + informacion[0].SegundoApellido
 
 	return nombre_persona, nil
