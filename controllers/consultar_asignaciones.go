@@ -25,7 +25,6 @@ func (c *ConsultarAsignacionesController) URLMapping() {
 func (c *ConsultarAsignacionesController) ConsultarAsignaciones() {
 
 	defer errorhandler.HandlePanic(&c.Controller)
-
 	response, err := services.ObtenerListaDeAsignaciones(c.Ctx.Input.Param(":numeroDocumento"))
 
 	if err != nil {
