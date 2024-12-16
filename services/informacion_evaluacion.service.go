@@ -22,13 +22,15 @@ func ObtenerInformacionEvaluacion(asignacion_evaluacion_id string) (informacion_
 	var asignacion_evaluadores []models.AsignacionEvaluador
 
 	// Se Busca la asignacion evaluador por id
-	//fmt.Println("URL evaluadores: ", beego.AppConfig.String("UrlEvaluacionesCumplidosProveedoresCrud")+"/asignacion_evaluador/?query=EvaluacionId.Id:"+strconv.Itoa(evaluacion_id)+",Activo:true&limit=-1")
+	//fmt.Println("Url asignacion evaluador: ", beego.AppConfig.String("UrlEvaluacionesCumplidosProveedoresCrud")+"/asignacion_evaluador/?query=Id:"+asignacion_evaluacion_id+",Activo:true&limit=-1")
 	if response, err := helpers.GetJsonTest(beego.AppConfig.String("UrlEvaluacionesCumplidosProveedoresCrud")+"/asignacion_evaluador/?query=Id:"+asignacion_evaluacion_id+",Activo:true&limit=-1", &respuesta_asignacion_evaluador); err != nil && response != 200 {
 		outputError = fmt.Errorf("Error al obtener la asignación del evaluador")
 		return informacion_evaluacion, outputError
 	}
 
-	if len(respuesta_asignacion_evaluador) == 0 {
+	//fmt.Println("Respuesta asignacion evaluador: ", respuesta_asignacion_evaluador)
+	data := respuesta_asignacion_evaluador["Data"].([]interface{})
+	if len(data[0].(map[string]interface{})) == 0 {
 		outputError = fmt.Errorf(fmt.Sprintf("No se encontró la asignación del evaluador con el id %s", asignacion_evaluacion_id))
 		return informacion_evaluacion, outputError
 	}

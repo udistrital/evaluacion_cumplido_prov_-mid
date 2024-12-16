@@ -5,7 +5,6 @@ import (
 	"bytes"
 	"encoding/base64"
 	"fmt"
-	"io/ioutil"
 	"math"
 	"strconv"
 	"strings"
@@ -15,7 +14,8 @@ import (
 	"github.com/phpdave11/gofpdf"
 	"github.com/udistrital/evaluacion_cumplido_prov_mid/helpers"
 	"github.com/udistrital/evaluacion_cumplido_prov_mid/models"
-	"github.com/udistrital/utils_oas/xlsx2pdf"
+
+	//"github.com/udistrital/utils_oas/xlsx2pdf"
 	excelize "github.com/xuri/excelize/v2"
 )
 
@@ -29,7 +29,7 @@ func GenerarDocumentoEvaluacion(evaluacion_id int) (outputError error) {
 
 	informacion_evaluacion, error_informacion := ObtenerInformacionDocumento(evaluacion_id)
 	if error_informacion != nil {
-		outputError = fmt.Errorf("Error al obtener la informacion del documento")
+		outputError = fmt.Errorf(error_informacion.Error())
 		return outputError
 	}
 
@@ -105,56 +105,56 @@ func GenerarDocumentoEvaluacion(evaluacion_id int) (outputError error) {
 
 	// Crear Pdf
 
-	template, err := excelize.OpenFile(fmt.Sprintf("static/documento/evaluacion_%s.xlsx", informacion_evaluacion.EmpresaProveedor))
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
+	// template, err := excelize.OpenFile(fmt.Sprintf("static/documento/evaluacion_%s.xlsx", informacion_evaluacion.EmpresaProveedor))
+	// if err != nil {
+	// 	fmt.Println(err)
+	// 	return
+	// }
 
-	pdf := gofpdf.New("P", "mm", "A4", "")
+	// pdf := gofpdf.New("P", "mm", "A4", "")
 
-	ExcelPdf := xlsx2pdf.Excel2PDF{
-		Excel:    template,
-		Pdf:      pdf,
-		Sheets:   make(map[string]xlsx2pdf.SheetInfo),
-		WFx:      2,
-		HFx:      2.925,
-		FontDims: xlsx2pdf.FontDims{Size: 0.85},
-		Header:   func() {},
-		Footer:   func() {},
-		CustomSize: xlsx2pdf.PageFormat{
-			Orientation: "P",
-			Wd:          297,
-			Ht:          210,
-		},
-	}
+	// ExcelPdf := xlsx2pdf.Excel2PDF{
+	// 	Excel:    template,
+	// 	Pdf:      pdf,
+	// 	Sheets:   make(map[string]xlsx2pdf.SheetInfo),
+	// 	WFx:      2,
+	// 	HFx:      2.925,
+	// 	FontDims: xlsx2pdf.FontDims{Size: 0.85},
+	// 	Header:   func() {},
+	// 	Footer:   func() {},
+	// 	CustomSize: xlsx2pdf.PageFormat{
+	// 		Orientation: "P",
+	// 		Wd:          297,
+	// 		Ht:          210,
+	// 	},
+	// }
 
-	dim, _ := template.GetSheetDimension(sheetName)
-	_, maxrow, _ := excelize.CellNameToCoordinates(strings.Split(dim, ":")[1])
-	for r := 1; r <= maxrow; r++ {
-		h, _ := template.GetRowHeight(sheetName, r)
-		template.SetRowHeight(sheetName, r, h*1.046)
-	}
+	// dim, _ := template.GetSheetDimension(sheetName)
+	// _, maxrow, _ := excelize.CellNameToCoordinates(strings.Split(dim, ":")[1])
+	// for r := 1; r <= maxrow; r++ {
+	// 	h, _ := template.GetRowHeight(sheetName, r)
+	// 	template.SetRowHeight(sheetName, r, h*1.046)
+	// }
 
-	ExcelPdf.ConvertSheets()
+	// ExcelPdf.ConvertSheets()
 
 	// Codificar el archivo en base64
-	encodeFile, outputError := encodePDF(pdf)
-	if outputError != nil {
-		return outputError
-	}
+	// encodeFile, outputError := encodePDF(pdf)
+	// if outputError != nil {
+	// 	return outputError
+	// }
 
 	// Decodificar el archivo en base64 y guardarlo
-	decoded, err := base64.StdEncoding.DecodeString(encodeFile)
-	if err != nil {
-		return fmt.Errorf("Error al decodificar el archivo")
-	}
+	// decoded, err := base64.StdEncoding.DecodeString(encodeFile)
+	// if err != nil {
+	// 	return fmt.Errorf("Error al decodificar el archivo")
+	// }
 
 	// Guardar el archivo
-	err = ioutil.WriteFile("static/documento/evaluacion_"+informacion_evaluacion.EmpresaProveedor+".pdf", decoded, 0644)
-	if err != nil {
-		return fmt.Errorf("Error al guardar el archivo")
-	}
+	// err = ioutil.WriteFile("static/documento/evaluacion_"+informacion_evaluacion.EmpresaProveedor+".pdf", decoded, 0644)
+	// if err != nil {
+	// 	return fmt.Errorf("Error al guardar el archivo")
+	// }
 
 	// if err := pdf.OutputFileAndClose("static/documento/prueba.pdf"); err != nil {
 	// 	fmt.Println(err)
@@ -757,21 +757,21 @@ func ObtenerInformacionDocumento(evaluacion_id int) (informacion_evaluacion mode
 	// Obtener el contrato suscrito
 	contrato_general, err := helpers.ObtenerContratoGeneral(strconv.Itoa(evaluacion[0].ContratoSuscritoId), strconv.Itoa(evaluacion[0].VigenciaContrato))
 	if err != nil {
-		outputError = fmt.Errorf("Error al obtener el contrato general")
+		outputError = fmt.Errorf(err.Error())
 		return informacion_evaluacion, outputError
 	}
 
 	// Obtener la dependencia del contrato
 	dependencia_supervisor, error_contrato := helpers.ObtenerDependenciasSupervisor(strconv.Itoa(contrato_general.Supervisor.Documento))
 	if error_contrato != nil {
-		outputError = fmt.Errorf("Error al obtener las dependencias del supervisor")
+		outputError = fmt.Errorf(error_contrato.Error())
 		return informacion_evaluacion, outputError
 	}
 
 	// Obtener el resultado final de la evaluacion
 	resultado_final_evaluacion, error_resultado := ObtenerResultadoFinalEvaluacion(evaluacion_id)
 	if error_resultado != nil {
-		outputError = fmt.Errorf("Error al obtener el resultado final de la evaluacion")
+		outputError = fmt.Errorf(error_resultado.Error())
 		return informacion_evaluacion, outputError
 	}
 
