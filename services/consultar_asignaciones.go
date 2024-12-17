@@ -76,7 +76,7 @@ func ObtenerListaDeAsignaciones(documento string) (mapResponse map[string]interf
 		contratosDepedencia = append(contratosDepedencia, contratoGeneral...)
 	}
 
-	listaSinAsignaciones, err := consulartSingAsinganaciones(contratosDepedencia)
+	listaSinAsignaciones, err := consulartAsingAsinganaciones(contratosDepedencia)
 
 	if err != nil {
 		return nil, fmt.Errorf("Error al consultar asignaciones")
@@ -87,7 +87,7 @@ func ObtenerListaDeAsignaciones(documento string) (mapResponse map[string]interf
 	return mapResponse, nil
 }
 
-func consulartSingAsinganaciones(contratosDepedencia []models.ContratoGeneral) (listaSinAsignaciones []models.AsignacionEvaluacion, outputError error) {
+func consulartAsingAsinganaciones(contratosDepedencia []models.ContratoGeneral) (listaSinAsignaciones []models.AsignacionEvaluacion, outputError error) {
 
 	for _, contrato := range contratosDepedencia {
 
