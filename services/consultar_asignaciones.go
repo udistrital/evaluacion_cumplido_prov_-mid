@@ -190,15 +190,15 @@ func obtenerProveedor(contratistaId int, asignacion models.AsignacionEvaluador, 
 		nombre_dependencia, _ := obtenerDependencia(contratoGeneral.Supervisor.DependenciaSupervisor)
 		estadoEvaluacion, _ := ObtenerEstadoEvaluacion(asignacion.EvaluacionId.Id)
 		asignacionEvaluacion := models.AsignacionEvaluacion{
-			AsignacionEvaluacionId:    asignacion.Id,
-			NombreProveedor:           listaProveedor[0].NomProveedor,
-			Dependencia:               nombre_dependencia,
-			TipoContrato:              contratoGeneral.TipoContrato.TipoContrato,
-			NumeroContrato:            contratoGeneral.ContratoSuscrito[0].NumeroContratoSuscrito,
-			VigenciaContrato:          strconv.Itoa(contratoGeneral.VigenciaContrato),
-			EvaluacionId:              asignacion.EvaluacionId.Id,
-			EstadoAsignacionEvauacion: estado[0].EstadoAsignacionEvaluador,
-			EstadoEvaluacion:          &estadoEvaluacion,
+			AsignacionEvaluacionId:     asignacion.Id,
+			NombreProveedor:            listaProveedor[0].NomProveedor,
+			Dependencia:                nombre_dependencia,
+			TipoContrato:               contratoGeneral.TipoContrato.TipoContrato,
+			NumeroContrato:             contratoGeneral.ContratoSuscrito[0].NumeroContratoSuscrito,
+			VigenciaContrato:           strconv.Itoa(contratoGeneral.VigenciaContrato),
+			EvaluacionId:               asignacion.EvaluacionId.Id,
+			EstadoAsignacionEvaluacion: estado[0].EstadoAsignacionEvaluador,
+			EstadoEvaluacion:           &estadoEvaluacion,
 		}
 		asisgnaciones = asignacionEvaluacion
 	} else {
