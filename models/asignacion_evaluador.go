@@ -4,7 +4,7 @@ import "time"
 
 type AsignacionEvaluador struct {
 	Id                       int
-	EvaluacionId             Evaluacion
+	EvaluacionId             *Evaluacion
 	PersonaId                string
 	Cargo                    string
 	PorcentajeEvaluacion     float64

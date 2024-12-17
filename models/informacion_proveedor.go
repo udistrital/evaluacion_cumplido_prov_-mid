@@ -1,5 +1,13 @@
 package models
 
+type Estado struct {
+	Id                   int
+	ClaseParametro       string
+	ValorParametro       string
+	DescripcionParametro string
+	Abreviatura          string
+}
+
 type InformacionProveedor struct {
 	Id                      int
 	Tipopersona             string
@@ -13,7 +21,7 @@ type InformacionProveedor struct {
 	Descripcion             string
 	PuntajeEvaluacion       float64
 	ClasificacionEvaluacion string
-	Estado                  *ParametroEstandar
+	Estado                  *Estado
 	TipoCuentaBancaria      string
 	NumCuentaBancaria       string
 	IdEntidadBancaria       float64
@@ -23,11 +31,4 @@ type InformacionProveedor struct {
 	Anexorut                string
 	Anexorup                string
 	RegimenContributivo     string
-}
-
-type ParametroEstandar struct {
-	Id                   int
-	ClaseParametro       string
-	ValorParametro       string
-	DescripcionParametro string
 }

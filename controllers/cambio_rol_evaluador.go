@@ -7,25 +7,24 @@ import (
 	"github.com/udistrital/utils_oas/requestresponse"
 )
 
-// Consultar-Asignaciones-Controller operations for Consultar-Asignaciones-Controller
-type ConsultarAsignacionesController struct {
+type CambioRolEvaluadorController struct {
 	beego.Controller
 }
 
-// URLMapping ...
-func (c *ConsultarAsignacionesController) URLMapping() {
-	c.Mapping("ConsultarAsignaciones", c.ConsultarAsignaciones)
+func (c *CambioRolEvaluadorController) URLMapping() {
+
 }
 
-// @Title ConsultarAsignaciones por documento supervisor
-// @Param Nmero de numeroDocumento path 	string	true "numeroDocumento"
+// @Title CambiarRolAsignacionEvaluador
+// @Param Nmero de idEvaluacion path 	string	true "idEvaluacion"
 // @Success 200 {object} models.CambioEstadoCumplidoResponse
 // @Failure 404 {object} map[string]interface{}
-// @router /:numeroDocumento [get]
-func (c *ConsultarAsignacionesController) ConsultarAsignaciones() {
+// @router /:idEvaluacion [post]
+func (c *CambioRolEvaluadorController) CambiarRolAsignacionEvaluador() {
 
 	defer errorhandler.HandlePanic(&c.Controller)
-	response, err := services.ObtenerListaDeAsignaciones(c.Ctx.Input.Param(":numeroDocumento"))
+	var evaluacionId = c.Ctx.Input.Param(":idEvaluacion")
+	response, err := services.CambiarRolAsignacionEvaluador(evaluacionId)
 
 	if err != nil {
 		c.Ctx.Output.SetStatus(400)
@@ -35,10 +34,11 @@ func (c *ConsultarAsignacionesController) ConsultarAsignaciones() {
 	if err == nil {
 
 		c.Ctx.Output.SetStatus(200)
-		c.Data["json"] = requestresponse.APIResponseDTO(true, 200, response, "Busqueda exitosa")
+		c.Data["json"] = requestresponse.APIResponseDTO(true, 200, response, "Cambio de rol exitoso")
 	} else {
 		c.Ctx.Output.SetStatus(400)
 		c.Data["json"] = requestresponse.APIResponseDTO(false, 400, err)
 	}
 	c.ServeJSON()
+
 }

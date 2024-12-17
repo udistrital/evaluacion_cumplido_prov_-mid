@@ -5,6 +5,35 @@
     },
     "basePath": "/v1",
     "paths": {
+        "/cambio-rol-evaluador/{idEvaluacion}": {
+            "post": {
+                "tags": [
+                    "cambio-rol-evaluador"
+                ],
+                "operationId": "CambioRolEvaluadorController.CambiarRolAsignacionEvaluador",
+                "parameters": [
+                    {
+                        "in": "de",
+                        "name": "Nmero",
+                        "description": "path",
+                        "schema": {
+                            "$ref": "#/definitions/idEvaluacion"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/models.CambioEstadoCumplidoResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "{object} map[string]interface{}"
+                    }
+                }
+            }
+        },
         "/carga-data-excel/upload": {
             "post": {
                 "tags": [
@@ -176,11 +205,20 @@
             "type": "object"
         },
         "1452.0xc0003aedb0.false": {
+        "10169.0xc000510b40.false": {
+            "title": "false",
+            "type": "object"
+        },
+        "10265.0xc000510ba0.false": {
             "title": "false",
             "type": "object"
         },
         "BodyResultadoEvaluacion": {
             "title": "BodyResultadoEvaluacion",
+            "type": "object"
+        },
+        "idEvaluacion": {
+            "title": "idEvaluacion",
             "type": "object"
         },
         "models.CambioEstadoCumplidoResponse": {
