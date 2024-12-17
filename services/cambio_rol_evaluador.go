@@ -21,19 +21,19 @@ func CambiarRolAsignacionEvaluador(idEvaluacion string) (resultado_map map[strin
 	estadoEvaluacion, err := consultarCambioEstadoEvaluacion(idEvaluacion)
 
 	if err != nil {
-		return nil, fmt.Errorf("Error al consultar asignaciones")
+		return nil, fmt.Errorf("error al consultar asignaciones")
 	}
 	//consutla las asignaciones con rol de evaluador
 	listaAsiganaciones, err := consultarAsignacionesPorIdEvaluacionYEstadoEvaluador(idEvaluacion)
 
 	if err != nil {
-		return nil, fmt.Errorf("Error al consultar asignaciones")
+		return nil, fmt.Errorf("error al consultar asignaciones")
 	}
 
 	if estadoEvaluacion.EstadoEvaluacionId.CodigoAbreviacion == "EPR" {
 		lista, err := agregarRolEvaluador(listaAsiganaciones)
 		if err != nil {
-			return nil, fmt.Errorf("Error al consultar asignaciones")
+			return nil, fmt.Errorf("error al consultar asignaciones")
 		}
 		resultado_map["rolesNoAgregado"] = lista
 	}
@@ -41,14 +41,14 @@ func CambiarRolAsignacionEvaluador(idEvaluacion string) (resultado_map map[strin
 	if estadoEvaluacion.EstadoEvaluacionId.CodigoAbreviacion == "AEV" {
 		lista, err := eliminarRolEvaluador(listaAsiganaciones)
 		if err != nil {
-			return nil, fmt.Errorf("Error al consultar asignaciones")
+			return nil, fmt.Errorf("error al consultar asignaciones")
 		}
 		resultado_map["rolesNoEliminados"] = lista
 
 	}
 
 	if err != nil {
-		return nil, fmt.Errorf("Error al consultar asignaciones")
+		return nil, fmt.Errorf("error al consultar asignaciones")
 	}
 	return nil, nil
 }
@@ -62,7 +62,7 @@ func consultarAsignacionesPorIdEvaluacionYEstadoEvaluador(idEvaluacion string) (
 	}()
 	var respuestaPeticion map[string]interface{}
 	var listaAsignacionEvaluador []models.AsignacionEvaluador
-	fmt.Println(beego.AppConfig.String("urlEvaluacionCumplidosCrud") + "/asignacion_evaluador?query=EvaluacionId.Id:" + idEvaluacion + ",RolAsignacionEvaluadorId.CodigoAbreviacion:EV")
+	//fmt.Println(beego.AppConfig.String("urlEvaluacionCumplidosCrud") + "/asignacion_evaluador?query=EvaluacionId.Id:" + idEvaluacion + ",RolAsignacionEvaluadorId.CodigoAbreviacion:EV")
 	if response, err := helpers.GetJsonWSO2Test(beego.AppConfig.String("urlEvaluacionCumplidosCrud")+"/asignacion_evaluador?query=EvaluacionId.Id:"+idEvaluacion+",RolAsignacionEvaluadorId.CodigoAbreviacion:EV", &respuestaPeticion); err == nil && response == 200 {
 		helpers.LimpiezaRespuestaRefactor(respuestaPeticion, &listaAsignacionEvaluador)
 		if len(listaAsignacionEvaluador) > 0 && listaAsignacionEvaluador[0].EvaluacionId != nil {
@@ -86,7 +86,7 @@ func consultarAsignacionesPorDocumentoEvaluadorYEstadoEvaluador(personaId string
 	asignacionesPendienesPorEvaluar = false
 	var respuestaPeticion map[string]interface{}
 	var listaAsignacionEvaluador []models.AsignacionEvaluador
-	fmt.Println(beego.AppConfig.String("urlEvaluacionCumplidosCrud") + "/asignacion_evaluador?query=EvaluacionId.Id:" + personaId + ",RolAsignacionEvaluadorId.CodigoAbreviacion:EV")
+	//beego.AppConfig.String("urlEvaluacionCumplidosCrud") + "/asignacion_evaluador?query=EvaluacionId.Id:" + personaId + ",RolAsignacionEvaluadorId.CodigoAbreviacion:EV")
 	if response, err := helpers.GetJsonWSO2Test(beego.AppConfig.String("urlEvaluacionCumplidosCrud")+"/asignacion_evaluador?query=PersonaId:"+personaId+",RolAsignacionEvaluadorId.CodigoAbreviacion:EV", &respuestaPeticion); err == nil && response == 200 {
 		helpers.LimpiezaRespuestaRefactor(respuestaPeticion, &listaAsignacionEvaluador)
 		if len(listaAsignacionEvaluador) > 0 && listaAsignacionEvaluador[0].EvaluacionId != nil {
@@ -115,7 +115,7 @@ func agregarRolEvaluador(asignaciones []models.AsignacionEvaluador) (listaNoAgre
 
 		activo, autenticacion, err := verificarRolEvaluador(asignacion.PersonaId)
 		if err != nil {
-			return listaNoAgregados, fmt.Errorf("Error al verificar rol de evaluador")
+			return listaNoAgregados, fmt.Errorf("error al verificar rol de evaluador")
 		}
 
 		if !activo {
@@ -137,12 +137,12 @@ func eliminarRolEvaluador(asignaciones []models.AsignacionEvaluador) (listaNoEli
 	for _, asignacion := range asignaciones {
 		activo, autenticacion, err := verificarRolEvaluador(asignacion.PersonaId)
 		if err != nil {
-			return listaNoEliminados, fmt.Errorf("Error al verificar rol de evaluador")
+			return listaNoEliminados, fmt.Errorf("error al verificar rol de evaluador")
 		}
 		asignacionePendientes, err := consultarAsignacionesPorDocumentoEvaluadorYEstadoEvaluador(asignacion.PersonaId)
 
 		if err != nil {
-			return listaNoEliminados, fmt.Errorf("Error al verificar asignaciones pendientes")
+			return listaNoEliminados, fmt.Errorf("error al verificar asignaciones pendientes")
 		}
 
 		if activo && !asignacionePendientes {
@@ -171,7 +171,7 @@ func consultarCambioEstadoEvaluacion(idEvalacion string) (cambiosEstadoEvaluacio
 
 	if response, err := helpers.GetJsonWSO2Test(beego.AppConfig.String("urlEvaluacionCumplidosCrud")+"/cambio_estado_evaluacion/?query=Activo:true,EvaluacionId.id:"+idEvalacion, &resultado_map); err == nil && response == 200 {
 		helpers.LimpiezaRespuestaRefactor(resultado_map, &listCambiosEstadoEvaluacion)
-		fmt.Println(listCambiosEstadoEvaluacion)
+		//fmt.Println(listCambiosEstadoEvaluacion)
 		cambiosEstadoEvaluacion = &listCambiosEstadoEvaluacion[0]
 
 	} else {
@@ -191,7 +191,8 @@ func verificarRolEvaluador(documento string) (activo bool, autenticacionResponse
 
 	peticionAutenticacion := models.PeticionAutenticacion{Numero: documento}
 	autenticacionResponse = models.Autentiacion{}
-	fmt.Println(beego.AppConfig.String("UrlAutenticacionMid"))
+	//fmt.Println(beego.AppConfig.String("UrlAutenticacionMid"))
+	fmt.Print(beego.AppConfig.String("UrlAutenticacionMid") + "/token/documentoToken")
 	if response := helpers.SendJson(beego.AppConfig.String("UrlAutenticacionMid")+"/token/documentoToken", "POST", &autenticacionResponse, peticionAutenticacion); response == nil {
 
 		for _, rol := range autenticacionResponse.Role {
@@ -204,9 +205,8 @@ func verificarRolEvaluador(documento string) (activo bool, autenticacionResponse
 		}
 
 	} else {
-		return false, autenticacionResponse, fmt.Errorf("Error al consultar roles en autenticacion")
+		return false, autenticacionResponse, fmt.Errorf("error al consultar roles en autenticacion")
 	}
 
 	return activo, autenticacionResponse, nil
 }
-
