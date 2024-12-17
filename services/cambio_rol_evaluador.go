@@ -46,10 +46,6 @@ func CambiarRolAsignacionEvaluador(idEvaluacion string) (resultado_map map[strin
 		resultado_map["rolesNoEliminados"] = lista
 
 	}
-
-	if err != nil {
-		return nil, fmt.Errorf("error al consultar asignaciones")
-	}
 	return nil, nil
 }
 

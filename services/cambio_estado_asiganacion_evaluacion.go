@@ -11,7 +11,7 @@ import (
 func CambioEstadoAsignacionEvaluacion(id_asiganacion int, codigo_estado string) (mapResponse map[string]interface{}, outputError error) {
 
 	estados_asignables := map[string][]string{
-		"EA": {"ER"},
+		"EA": {"ER", "EA"},
 		"ER": {"EAP"},
 	}
 
@@ -45,7 +45,7 @@ func CambioEstadoAsignacionEvaluacion(id_asiganacion int, codigo_estado string) 
 
 	//si estado_asignacion es nulo y el codigo_estado es EA se agrega el estado
 	if estado_asignacion_actual == nil && codigo_estado == "EA" {
-		agregarEstado(codigo_estado, id_asiganacion)
+		agregarEstadoAsignacion(codigo_estado, id_asiganacion)
 		mapResponse := make(map[string]interface{})
 		mapResponse["Message"] = "Se agrego esl estado EA"
 		return mapResponse, nil
@@ -66,7 +66,7 @@ func CambioEstadoAsignacionEvaluacion(id_asiganacion int, codigo_estado string) 
 	}
 
 	////verificar si el estado  esta en el mapa de estados asignables
-	estados, existe := verificarSecuencia(estados_asignables, estado_asignacion_actual.EstadoAsignacionEvaluador.CodigoAbreviacion)
+	estados, existe := verificarSecuenciaAsignacion(estados_asignables, estado_asignacion_actual.EstadoAsignacionEvaluador.CodigoAbreviacion)
 
 	if !existe {
 		outputError = fmt.Errorf("el estado %s no se puede asignar, no se encuentra en la lista de asignables", estado_asignacion_actual.EstadoAsignacionEvaluador.CodigoAbreviacion)
@@ -74,11 +74,76 @@ func CambioEstadoAsignacionEvaluacion(id_asiganacion int, codigo_estado string) 
 	}
 
 	//verificar si el estado  esta en el slice de estados asignables
-	existe_en_slice := verificarSlice(estados, codigo_estado)
+	existe_en_slice := verificarSliceAsignacion(estados, codigo_estado)
 
 	if existe_en_slice {
-		desabilitarEstado(estado_asignacion_actual)
-		agregarEstado(codigo_estado, id_asiganacion)
+
+		if codigo_estado == "ER" {
+			cambiar_estado_evaluacion, err := VerificarYCambiarEstadoEvaluacion(estado_asignacion_actual.AsignacionEvaluadorId.EvaluacionId.Id, codigo_estado)
+
+			if err != nil {
+				outputError = fmt.Errorf("error al verificar el cambio de estado de la evaluacion")
+				return nil, outputError
+			}
+
+			if cambiar_estado_evaluacion {
+
+				if err != nil {
+					outputError = fmt.Errorf("error al consultar el estado de la evaluacion")
+					return nil, outputError
+				}
+
+				_, err = CambioEstadoEvaluacion(estado_asignacion_actual.AsignacionEvaluadorId.EvaluacionId.Id, "PRE")
+
+				if err != nil {
+					outputError = fmt.Errorf("error al cambiar el estado de la evaluacion")
+					return nil, outputError
+
+				}
+			}
+
+		}
+
+		if codigo_estado == "EAP" {
+			cambiar_estado_evaluacion, err := VerificarYCambiarEstadoEvaluacion(estado_asignacion_actual.AsignacionEvaluadorId.EvaluacionId.Id, codigo_estado)
+
+			if err != nil {
+				outputError = fmt.Errorf("error al verificar el cambio de estado de la evaluacion")
+				return nil, outputError
+			}
+
+			if cambiar_estado_evaluacion {
+
+				if err != nil {
+					outputError = fmt.Errorf("error al consultar el estado de la evaluacion")
+					return nil, outputError
+				}
+
+				_, err = CambioEstadoEvaluacion(estado_asignacion_actual.AsignacionEvaluadorId.EvaluacionId.Id, "EAV")
+
+				if err != nil {
+					outputError = fmt.Errorf("error al cambiar el estado de la evaluacion")
+					return nil, outputError
+
+				}
+			}
+
+		}
+
+		err := desabilitarEstadoAsignacion(estado_asignacion_actual)
+
+		if err != nil {
+			outputError = fmt.Errorf("error al desabilitar dea assignacion el estado")
+			return nil, outputError
+		}
+
+		err = agregarEstadoAsignacion(codigo_estado, id_asiganacion)
+
+		if err != nil {
+			outputError = fmt.Errorf("error al agregar estado de asignacion")
+			return nil, outputError
+		}
+
 		mapResponse := make(map[string]interface{})
 		mapResponse["Message"] = fmt.Sprintf("Se cambio  el estado de %s a %s", estado_asignacion_actual.EstadoAsignacionEvaluador.CodigoAbreviacion, codigo_estado)
 		return mapResponse, nil
@@ -115,7 +180,7 @@ func consultarEstadoAsignacionEvaluacion(codigo_estado string) (cambio_estado_as
 
 }
 
-func consultarAsignacionesPorId(id_asiganacion int) (asignacion *models.AsignacionEvaluador, outputError error) {
+func ConsultarAsignacionesPorIdEvaluacion(id_evaluacion int) (asignacion *[]models.AsignacionEvaluador, outputError error) {
 	defer func() {
 		if err := recover(); err != nil {
 			outputError = fmt.Errorf("%v", err)
@@ -126,12 +191,12 @@ func consultarAsignacionesPorId(id_asiganacion int) (asignacion *models.Asignaci
 	var respuestaPeticion map[string]interface{}
 	var asignaciones_evaluador []models.AsignacionEvaluador
 
-	query := fmt.Sprintf("/asignacion_evaluador?query=Id:%d", id_asiganacion)
+	query := fmt.Sprintf("/asignacion_evaluador?query=EvaluacionId.Id:%d", id_evaluacion)
 	if response, err := helpers.GetJsonWSO2Test(beego.AppConfig.String("urlEvaluacionCumplidosCrud")+query, &respuestaPeticion); err == nil && response == 200 {
 
 		helpers.LimpiezaRespuestaRefactor(respuestaPeticion, &asignaciones_evaluador)
 		if len(asignaciones_evaluador) > 0 && asignaciones_evaluador[0].EvaluacionId != nil {
-			asignacion = &asignaciones_evaluador[0]
+			asignacion = &asignaciones_evaluador
 
 		}
 	} else {
@@ -139,6 +204,7 @@ func consultarAsignacionesPorId(id_asiganacion int) (asignacion *models.Asignaci
 		return nil, outputError
 
 	}
+
 	return asignacion, nil
 }
 
@@ -173,7 +239,7 @@ func ConsultarEstadoActualAsingacion(id_asiganacion int) (estado_asignacion *mod
 	return estado_asignacion, nil
 }
 
-func desabilitarEstado(estadoAsignacion *models.CambioEstadoASignacionEnvaluacion) (outputError error) {
+func desabilitarEstadoAsignacion(estadoAsignacion *models.CambioEstadoASignacionEnvaluacion) (outputError error) {
 	defer func() {
 		if err := recover(); err != nil {
 			outputError = fmt.Errorf("%v", err)
@@ -206,7 +272,7 @@ func desabilitarEstado(estadoAsignacion *models.CambioEstadoASignacionEnvaluacio
 
 }
 
-func agregarEstado(codigo_abrevicaion string, id_asiganacion int) (outputError error) {
+func agregarEstadoAsignacion(codigo_abrevicaion string, id_asiganacion int) (outputError error) {
 	defer func() {
 		if err := recover(); err != nil {
 			outputError = fmt.Errorf("%v", err)
@@ -241,13 +307,13 @@ func agregarEstado(codigo_abrevicaion string, id_asiganacion int) (outputError e
 	return nil
 }
 
-func verificarSecuencia(estados map[string][]string, abreviacion string) (estado []string, existe bool) {
-	// Asignamos directamente el valor del mapa a la variable estado y el valor de existencia
+func verificarSecuenciaAsignacion(estados map[string][]string, abreviacion string) (estado []string, existe bool) {
+
 	estado, existe = estados[abreviacion]
 	return estado, existe
 }
 
-func verificarSlice(estados []string, abreviacion string) (existe bool) {
+func verificarSliceAsignacion(estados []string, abreviacion string) (existe bool) {
 
 	for _, estado := range estados {
 
@@ -258,32 +324,33 @@ func verificarSlice(estados []string, abreviacion string) (existe bool) {
 	return false
 }
 
-// func Consultar_evaluacion_id(id_evaluacion int) (evaluacion *models.Evaluacion, outputError error) {
-// 	defer func() {
-// 		if err := recover(); err != nil {
-// 			outputError = fmt.Errorf("%v", err)
-// 			panic(outputError)
-// 		}
-// 	}()
+func VerificarYCambiarEstadoEvaluacion(id_evaluacion int, estado_abreviacion string) (cambiar_estado_evaluacion bool, outputError error) {
 
-// 	var respuestaPeticion map[string]interface{}
-// 	var evaluaciones []models.Evaluacion
+	cambiar_estado_evaluacion = true
 
-// 	query := fmt.Sprintf("/evaluacion/?query=Id:%d", id_evaluacion)
-// 	fmt.Println(beego.AppConfig.String("urlEvaluacionCumplidosCrud") + query)
-// 	if response, err := helpers.GetJsonWSO2Test(beego.AppConfig.String("urlEvaluacionCumplidosCrud")+query, &respuestaPeticion); err == nil && response == 200 {
+	asiganciones, err := ConsultarAsignacionesPorIdEvaluacion(id_evaluacion)
 
-// 		helpers.LimpiezaRespuestaRefactor(respuestaPeticion, &evaluaciones)
-// 		if len(evaluaciones) > 0 && evaluaciones[0].Id != 0 {
-// 			evaluacion = &evaluaciones[0]
+	if err != nil {
+		outputError = fmt.Errorf("error al consultar asignaciones")
+		return false, outputError
+	}
 
-// 		}
-// 	} else {
-// 		outputError = fmt.Errorf("error al consultar asignaciones")
-// 		return nil, outputError
+	for _, asigancion := range *asiganciones {
 
-// 	}
-// 	fmt.Println(evaluacion)
-// 	return evaluacion, nil
+		estado_asiganacion, err := ConsultarEstadoActualAsingacion(asigancion.Id)
 
-// }
+		if err != nil {
+			fmt.Printf("error al consultar el estado de la asignacion %s", estado_asiganacion.Id)
+
+		}
+
+		if estado_asiganacion.EstadoAsignacionEvaluador.CodigoAbreviacion != estado_abreviacion {
+			cambiar_estado_evaluacion = false
+			break
+		}
+
+	}
+
+	return cambiar_estado_evaluacion, outputError
+
+}

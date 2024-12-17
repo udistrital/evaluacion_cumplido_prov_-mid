@@ -8,7 +8,86 @@ import (
 	"github.com/udistrital/evaluacion_cumplido_prov_mid/models"
 )
 
-func consultarEstadoActualEvaluacion(id_evaluacion int) (estado_asignacion *models.CambioEstadoEvaluacion, outputError error) {
+func CambioEstadoEvaluacion(id_evaluacion int, codigo_estado string) (mapResponse map[string]interface{}, outputError error) {
+	defer func() {
+		if err := recover(); err != nil {
+			outputError = fmt.Errorf("%v", err)
+			panic(outputError)
+		}
+	}()
+
+	estado_actual, err := ConsultarEstadoActualEvaluacion(id_evaluacion)
+
+	if err != nil {
+		outputError = fmt.Errorf("error al consultar el estado de la evaluacion")
+		return nil, outputError
+	}
+
+	estado_a_asignar, err := ConsultarEstadoEvaluacion(codigo_estado)
+
+	if err != nil {
+		outputError = fmt.Errorf("el estado a asignar no existe")
+		return nil, outputError
+	}
+
+	estados_asignables := map[string][]string{
+		"GNT": {"EPR"},
+		"EPR": {"PRE"},
+		"PRE": {"AEV"},
+	}
+
+	lista_asignable, existe := verificarSecuenciaEvaluacion(estados_asignables, codigo_estado)
+
+	if !existe {
+		outputError = fmt.Errorf("el estado %s no se puede asignar, no se encuentra en la lista de asignables", estado_actual.EstadoEvaluacionId.CodigoAbreviacion)
+		return nil, outputError
+	}
+
+	existe_en_slice := verificarSliceEvaluacion(lista_asignable, estado_a_asignar.CodigoAbreviacion)
+
+	if existe_en_slice {
+
+		if codigo_estado == "EPR" {
+
+			lista_asignaciones, err := ConsultarAsignacionesPorIdEvaluacion(id_evaluacion)
+
+			if err != nil {
+				outputError = fmt.Errorf("error al consultar asignaciones")
+				return nil, outputError
+			}
+
+			for _, asignacion := range *lista_asignaciones {
+
+				_, err = CambioEstadoAsignacionEvaluacion(asignacion.Id, "EA")
+
+			}
+
+		}
+
+		err = DesabilitarEstadoEvaluacion(estado_actual)
+		if err != nil {
+			outputError = fmt.Errorf("error al desabilitar el estado")
+			return nil, outputError
+		}
+
+		err = AgregarEstadoEvaluacion(codigo_estado, estado_a_asignar.Id)
+		if err != nil {
+			outputError = fmt.Errorf("error al agregar el estado")
+			return nil, outputError
+		}
+
+		mapResponse := make(map[string]interface{})
+		mapResponse["Message"] = fmt.Sprintf("Se cambio  el estado de %s a %s", codigo_estado, estado_a_asignar.CodigoAbreviacion)
+		return mapResponse, nil
+
+	} else {
+		outputError = fmt.Errorf("el estado %s no se puede asignar, no se encuentra en la lista de asignables", estado_actual.EstadoEvaluacionId.CodigoAbreviacion)
+		return nil, outputError
+	}
+
+}
+
+func ConsultarEstadoActualEvaluacion(id_evaluacion int) (estado_asignacion *models.CambioEstadoEvaluacion, outputError error) {
 
 	defer func() {
 		if err := recover(); err != nil {
@@ -40,7 +119,7 @@ func consultarEstadoActualEvaluacion(id_evaluacion int) (estado_asignacion *mode
 	return estado_asignacion, nil
 }
 
-func consultarEstadoEvaluacion(codigo_abreviacion_estado_evalauacion string) (estado__evaluacion *models.EstadoEvaluacion, outputError error) {
+func ConsultarEstadoEvaluacion(codigo_abreviacion_estado_evalauacion string) (estado__evaluacion *models.EstadoEvaluacion, outputError error) {
 
 	defer func() {
 		if err := recover(); err != nil {
@@ -70,7 +149,7 @@ func consultarEstadoEvaluacion(codigo_abreviacion_estado_evalauacion string) (es
 
 }
 
-func desabilitarEstadoEvaluacion(estado_evalacion *models.CambioEstadoEvaluacion) (outputError error) {
+func DesabilitarEstadoEvaluacion(estado_evalacion *models.CambioEstadoEvaluacion) (outputError error) {
 	defer func() {
 		if err := recover(); err != nil {
 			outputError = fmt.Errorf("%v", err)
@@ -97,7 +176,7 @@ func desabilitarEstadoEvaluacion(estado_evalacion *models.CambioEstadoEvaluacion
 
 }
 
-func agregarEstadoEvaluacion(codigo_abreviacion string, id_evaluacion int) (outputError error) {
+func AgregarEstadoEvaluacion(codigo_abreviacion string, id_evaluacion int) (outputError error) {
 	defer func() {
 		if err := recover(); err != nil {
 			outputError = fmt.Errorf("%v", err)
@@ -106,7 +185,7 @@ func agregarEstadoEvaluacion(codigo_abreviacion string, id_evaluacion int) (outp
 	}()
 	var respuestaPeticion map[string]interface{}
 
-	estado_evaluacion_consulta, err := consultarEstadoEvaluacion(codigo_abreviacion)
+	estado_evaluacion_consulta, err := ConsultarEstadoEvaluacion(codigo_abreviacion)
 
 	if err != nil {
 		outputError = fmt.Errorf("error al consultar el estado de la asignacion")
@@ -130,4 +209,21 @@ func agregarEstadoEvaluacion(codigo_abreviacion string, id_evaluacion int) (outp
 		return outputError
 	}
 	return nil
+}
+
+func verificarSecuenciaEvaluacion(estados map[string][]string, abreviacion string) (lista_estado []string, existe bool) {
+
+	lista_estado, existe = estados[abreviacion]
+	return lista_estado, existe
+}
+
+func verificarSliceEvaluacion(estados []string, abreviacion string) (existe bool) {
+
+	for _, estado := range estados {
+
+		if estado == abreviacion {
+			return true
+		}
+	}
+	return false
 }
