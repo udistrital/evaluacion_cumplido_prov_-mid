@@ -8,32 +8,6 @@ import (
 	"github.com/udistrital/evaluacion_cumplido_prov_mid/models"
 )
 
-func Test() {
-
-	estado_asigancion, err := consultarEstadoAsignacionEvaluacion("ER")
-
-	if err != nil {
-		fmt.Println("error consultarEstadoAsignacionEvaluacion")
-	}
-
-	cambio_estado_asignacion_evaluador, err := ConsultarEstadoActualAsingacion(1)
-
-	if err != nil {
-		fmt.Println("error ConsultarEstadoActualAsingacion")
-	}
-
-	err = desabilitarEstado(cambio_estado_asignacion_evaluador)
-
-	if err != nil {
-		fmt.Println("error desabilitarEstado")
-	}
-
-	err = agregarEstado("EA", 1)
-
-	fmt.Println(estado_asigancion)
-
-}
-
 func CambioEstadoAsignacionEvaluacion(id_asiganacion int, codigo_estado string) (mapResponse map[string]interface{}, outputError error) {
 
 	estados_asignables := map[string][]string{
@@ -210,9 +184,15 @@ func desabilitarEstado(estadoAsignacion *models.CambioEstadoASignacionEnvaluacio
 	if estadoAsignacion != nil {
 		estadoAsignacion.Activo = false
 
-		query := fmt.Sprintf("/estado_asignacion_evaluador/%d", estadoAsignacion.Id)
+		query := fmt.Sprintf("/cambio_estado_asignacion_evaluador/%d", estadoAsignacion.Id)
+
 		if response := helpers.SendJson(beego.AppConfig.String("urlEvaluacionCumplidosCrud")+query, "PUT", &respuestaPeticion, estadoAsignacion); response == nil {
 		} else {
+			outputError = fmt.Errorf("error al desabilitar el estado")
+			return outputError
+		}
+
+		if respuestaPeticion["Success"] == false {
 			outputError = fmt.Errorf("error al desabilitar el estado")
 			return outputError
 		}
