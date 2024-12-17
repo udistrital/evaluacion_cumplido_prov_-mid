@@ -8,6 +8,32 @@ import (
 	"github.com/udistrital/evaluacion_cumplido_prov_mid/models"
 )
 
+func Test() {
+
+	estado_asigancion, err := consultarEstadoAsignacionEvaluacion("ER")
+
+	if err != nil {
+		fmt.Println("error consultarEstadoAsignacionEvaluacion")
+	}
+
+	cambio_estado_asignacion_evaluador, err := ConsultarEstadoActualAsingacion(1)
+
+	if err != nil {
+		fmt.Println("error ConsultarEstadoActualAsingacion")
+	}
+
+	err = desabilitarEstado(cambio_estado_asignacion_evaluador)
+
+	if err != nil {
+		fmt.Println("error desabilitarEstado")
+	}
+
+	err = agregarEstado("EA", 1)
+
+	fmt.Println(estado_asigancion)
+
+}
+
 func CambioEstadoAsignacionEvaluacion(id_asiganacion int, codigo_estado string) (mapResponse map[string]interface{}, outputError error) {
 
 	estados_asignables := map[string][]string{
@@ -58,18 +84,18 @@ func CambioEstadoAsignacionEvaluacion(id_asiganacion int, codigo_estado string) 
 		return nil, outputError
 	}
 
-	// si el estado es el mimo no hay cambios
-	if estado_asignacion_actual.CodigoAbreviacion == codigo_estado {
+	// si el estado es el mismo no hay cambios
+	if estado_asignacion_actual.EstadoAsignacionEvaluador.CodigoAbreviacion == codigo_estado {
 		fmt.Println("no se puede asiganar el estado")
 		outputError = fmt.Errorf("error no se pude asginar el estado : %s, a una asigancion nueva", codigo_estado)
 		return nil, outputError
 	}
 
 	////verificar si el estado  esta en el mapa de estados asignables
-	estados, existe := verificarSecuencia(estados_asignables, estado_asignacion_actual.CodigoAbreviacion)
+	estados, existe := verificarSecuencia(estados_asignables, estado_asignacion_actual.EstadoAsignacionEvaluador.CodigoAbreviacion)
 
 	if !existe {
-		outputError = fmt.Errorf("el estado %s no se puede asignar, no se encuentra en la lista de asignables", estado_asignacion_actual.CodigoAbreviacion)
+		outputError = fmt.Errorf("el estado %s no se puede asignar, no se encuentra en la lista de asignables", estado_asignacion_actual.EstadoAsignacionEvaluador.CodigoAbreviacion)
 		return nil, outputError
 	}
 
@@ -80,7 +106,7 @@ func CambioEstadoAsignacionEvaluacion(id_asiganacion int, codigo_estado string) 
 		desabilitarEstado(estado_asignacion_actual)
 		agregarEstado(codigo_estado, id_asiganacion)
 		mapResponse := make(map[string]interface{})
-		mapResponse["Message"] = fmt.Sprintf("Se cambio  el estado de %s a %s", estado_asignacion_actual.CodigoAbreviacion, codigo_estado)
+		mapResponse["Message"] = fmt.Sprintf("Se cambio  el estado de %s a %s", estado_asignacion_actual.EstadoAsignacionEvaluador.CodigoAbreviacion, codigo_estado)
 		return mapResponse, nil
 	}
 	return nil, outputError
@@ -142,7 +168,7 @@ func consultarAsignacionesPorId(id_asiganacion int) (asignacion *models.Asignaci
 	return asignacion, nil
 }
 
-func ConsultarEstadoActualAsingacion(id_asiganacion int) (estado_asignacion *models.EstadoAsignacionEvaluador, outputError error) {
+func ConsultarEstadoActualAsingacion(id_asiganacion int) (estado_asignacion *models.CambioEstadoASignacionEnvaluacion, outputError error) {
 	defer func() {
 		if err := recover(); err != nil {
 			outputError = fmt.Errorf("%v", err)
@@ -158,7 +184,7 @@ func ConsultarEstadoActualAsingacion(id_asiganacion int) (estado_asignacion *mod
 
 		helpers.LimpiezaRespuestaRefactor(respuestaPeticion, &cambio_estado_asignacion_evaluador)
 		if len(cambio_estado_asignacion_evaluador) > 0 && cambio_estado_asignacion_evaluador[0].Id != 0 {
-			estado_asignacion = cambio_estado_asignacion_evaluador[0].EstadoAsignacionEvaluador
+			estado_asignacion = &cambio_estado_asignacion_evaluador[0]
 			fmt.Println(estado_asignacion)
 
 		} else {
@@ -173,7 +199,7 @@ func ConsultarEstadoActualAsingacion(id_asiganacion int) (estado_asignacion *mod
 	return estado_asignacion, nil
 }
 
-func desabilitarEstado(estadoAsignacion *models.EstadoAsignacionEvaluador) (outputError error) {
+func desabilitarEstado(estadoAsignacion *models.CambioEstadoASignacionEnvaluacion) (outputError error) {
 	defer func() {
 		if err := recover(); err != nil {
 			outputError = fmt.Errorf("%v", err)
@@ -184,7 +210,8 @@ func desabilitarEstado(estadoAsignacion *models.EstadoAsignacionEvaluador) (outp
 	if estadoAsignacion != nil {
 		estadoAsignacion.Activo = false
 
-		if response := helpers.SendJson(beego.AppConfig.String("urlEvaluacionCumplidosCrud")+"/token/documentoToken", "POST", &estadoAsignacion, respuestaPeticion); response == nil {
+		query := fmt.Sprintf("/estado_asignacion_evaluador/%d", estadoAsignacion.Id)
+		if response := helpers.SendJson(beego.AppConfig.String("urlEvaluacionCumplidosCrud")+query, "PUT", &respuestaPeticion, estadoAsignacion); response == nil {
 		} else {
 			outputError = fmt.Errorf("error al desabilitar el estado")
 			return outputError
