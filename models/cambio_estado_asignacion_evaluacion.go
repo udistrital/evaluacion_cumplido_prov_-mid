@@ -10,3 +10,9 @@ type CambioEstadoASignacionEnvaluacion struct {
 	FechaCreacion             time.Time                  `json:"FechaCreacion"`
 	FechaModificacion         time.Time                  `json:"FechaModificacion"`
 }
+
+type CambioEstadoASignacionEnvaluacionPeticion struct {
+	EstadoAsignacionEvaluador EstadoAsignacionEvaluador `json:"EstadoAsignacionEvaluadorId"`
+	AsignacionEvaluadorId     AsignacionEvaluador       `json:"AsignacionEvaluadorId"`
+	Activo                    bool                      `json:"Activo"`
+}
