@@ -15,7 +15,7 @@ func init() {
             MethodParams: param.Make(),
             Filters: nil,
             Params: nil})
-
+  
     beego.GlobalControllerRouter["github.com/udistrital/evaluacion_cumplido_prov_mid/controllers:CargaDataExcelController"] = append(beego.GlobalControllerRouter["github.com/udistrital/evaluacion_cumplido_prov_mid/controllers:CargaDataExcelController"],
         beego.ControllerComments{
             Method: "UploadExcel",
@@ -38,6 +38,24 @@ func init() {
         beego.ControllerComments{
             Method: "GenerarDocumentoEvaluacion",
             Router: "/:evaluacion_id",
+            AllowHTTPMethods: []string{"get"},
+            MethodParams: param.Make(),
+            Filters: nil,
+            Params: nil})
+  
+    beego.GlobalControllerRouter["github.com/udistrital/evaluacion_cumplido_prov_mid/controllers:EvaluacionCumplidoController"] = append(beego.GlobalControllerRouter["github.com/udistrital/evaluacion_cumplido_prov_mid/controllers:EvaluacionCumplidoController"],
+        beego.ControllerComments{
+            Method: "SubirEvaluacionCumplido",
+            Router: "/:evaluacion_id",
+            AllowHTTPMethods: []string{"get"},
+            MethodParams: param.Make(),
+            Filters: nil,
+            Params: nil})
+
+    beego.GlobalControllerRouter["github.com/udistrital/evaluacion_cumplido_prov_mid/controllers:InformacionEvaluacionController"] = append(beego.GlobalControllerRouter["github.com/udistrital/evaluacion_cumplido_prov_mid/controllers:InformacionEvaluacionController"],
+        beego.ControllerComments{
+            Method: "ObtenerInformacionEvaluacion",
+            Router: "/:asignacion_id",
             AllowHTTPMethods: []string{"get"},
             MethodParams: param.Make(),
             Filters: nil,

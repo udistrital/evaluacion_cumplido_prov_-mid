@@ -44,47 +44,6 @@ func GuardarResultadoEvaluacion(resultado models.BodyResultadoEvaluacion) (outpu
 	return nil
 }
 
-// Funcion para calcular la clasificacion de la evaluacion, por el momento este dato se calcula desde el cliente
-func CalcularClasificacionEvaluacion(resultados_finales models.Resultado) (resultado_clasificacion models.Clasificacion, outputError error) {
-	defer func() {
-		if err := recover(); err != nil {
-			outputError = fmt.Errorf("%v", err)
-			panic(outputError.Error())
-		}
-	}()
-
-	var valor_clasificacion int
-	var codigo_abreviacion_clasificacion string
-
-	// Calcular la clasificación de la evaluación
-	for _, item := range resultados_finales.ResultadosIndividuales {
-		valor_clasificacion += item.Respuesta.ValorAsignado
-	}
-
-	switch {
-	case valor_clasificacion >= 0 && valor_clasificacion <= 45:
-		codigo_abreviacion_clasificacion = "ML"
-	case valor_clasificacion >= 46 && valor_clasificacion <= 79:
-		codigo_abreviacion_clasificacion = "BN"
-	case valor_clasificacion >= 80 && valor_clasificacion <= 100:
-		codigo_abreviacion_clasificacion = "EX"
-	}
-
-	var respuesta_clasificacion map[string]interface{}
-	var clasificacion []models.Clasificacion
-
-	if response, err := helpers.GetJsonTest(beego.AppConfig.String("UrlEvaluacionesCumplidosProveedoresCrud")+"/clasificacion/?query=CodigoAbreviacion:"+codigo_abreviacion_clasificacion+",Activo:true&limit=1", &respuesta_clasificacion); err != nil && response != 200 {
-		outputError = fmt.Errorf("Error al obtener la clasificación de la evaluación")
-		return resultado_clasificacion, outputError
-	}
-
-	helpers.LimpiezaRespuestaRefactor(respuesta_clasificacion, &clasificacion)
-
-	resultado_clasificacion = clasificacion[0]
-
-	return resultado_clasificacion, nil
-}
-
 func ObtenerResultadoFinalEvaluacion(evaluacion_id int) (resultados_finales models.ResultadoFinalEvaluacion, outputError error) {
 	defer func() {
 		if err := recover(); err != nil {
@@ -130,36 +89,6 @@ func ObtenerResultadoFinalEvaluacion(evaluacion_id int) (resultados_finales mode
 	return resultados_finales, nil
 }
 
-func ObtenerResultadoEvaluacion(asignacion_evaluacion_id int) (resultado_evaluacion models.ResultadoEvaluacion, outputError error) {
-	defer func() {
-		if err := recover(); err != nil {
-			outputError = fmt.Errorf("%v", err)
-			panic(outputError.Error())
-		}
-	}()
-
-	var respuesta_resultado_evaluacion map[string]interface{}
-	var resultado []models.ResultadoEvaluacion
-
-	//fmt.Println("URL resultado evaluacion: ", beego.AppConfig.String("UrlEvaluacionesCumplidosProveedoresCrud")+"/resultado_evaluacion/?query=AsignacionEvaluadorId.Id:"+strconv.Itoa(asignacion_evaluacion_id)+",Activo:true&limit=1")
-	if response, err := helpers.GetJsonTest(beego.AppConfig.String("UrlEvaluacionesCumplidosProveedoresCrud")+"/resultado_evaluacion/?query=AsignacionEvaluadorId.Id:"+strconv.Itoa(asignacion_evaluacion_id)+",Activo:true&limit=1", &respuesta_resultado_evaluacion); err != nil && response != 200 {
-		outputError = fmt.Errorf("Error al obtener el resultado de la evaluación")
-		return resultado_evaluacion, outputError
-	}
-
-	data := respuesta_resultado_evaluacion["Data"].([]interface{})
-	if len(data[0].(map[string]interface{})) == 0 {
-		outputError = fmt.Errorf("El Evaluador no tiene registrado un resultado de la evaluación")
-		return resultado_evaluacion, outputError
-	}
-
-	helpers.LimpiezaRespuestaRefactor(respuesta_resultado_evaluacion, &resultado)
-
-	resultado_evaluacion = resultado[0]
-
-	return resultado_evaluacion, nil
-}
-
 func ProcesarResultadosEvaluaciones(evaluadores []models.AsignacionEvaluador) (resultados_finales models.ResultadoFinalEvaluacion, outputError error) {
 	defer func() {
 		if err := recover(); err != nil {
@@ -176,17 +105,17 @@ func ProcesarResultadosEvaluaciones(evaluadores []models.AsignacionEvaluador) (r
 	// Obtener el resultado de la evaluacion de cada evaluador
 
 	for _, evaluador := range evaluadores {
-		nombre_persona, error := ObtenerNombrePersonaNatural(evaluador.PersonaId)
+		nombre_persona, error := helpers.ObtenerNombrePersonaNatural(evaluador.PersonaId)
 		if error != nil {
 			outputError = fmt.Errorf(error.Error())
 			return resultados_finales, outputError
 		}
-		items_evaluador, errorItems := ObtenerItemsEvaluador(evaluador.Id)
+		_, items_evaluador, errorItems := helpers.ObtenerItemsEvaluador(evaluador.Id)
 		if errorItems != nil {
 			outputError = fmt.Errorf(errorItems.Error())
 			return resultados_finales, outputError
 		}
-		resultado_evaluacion, err := ObtenerResultadoEvaluacion(evaluador.Id)
+		resultado_evaluacion, err := helpers.ObtenerResultadoEvaluacion(evaluador.Id)
 		if err != nil {
 			outputError = fmt.Errorf(err.Error())
 			return resultados_finales, outputError
@@ -292,49 +221,4 @@ func ProcesarResultadosEvaluaciones(evaluadores []models.AsignacionEvaluador) (r
 	}
 
 	return resultados_finales, nil
-}
-
-func ObtenerNombrePersonaNatural(documento_persona string) (nombre_persona string, outputError error) {
-	defer func() {
-		if err := recover(); err != nil {
-			outputError = fmt.Errorf("%v", err)
-			panic(outputError.Error())
-		}
-	}()
-
-	var informacion []models.InformacionPersonaNatural
-
-	if response, err := helpers.GetJsonTest(beego.AppConfig.String("UrlAmazonApi")+"/informacion_persona_natural/?fields=PrimerNombre,SegundoNombre,PrimerApellido,SegundoApellido&limit=0&query=Id:"+documento_persona, &informacion); err != nil && response != 200 {
-		outputError = fmt.Errorf("Error al obtener la información de la persona")
-		return nombre_persona, outputError
-	}
-
-	nombre_persona = informacion[0].PrimerNombre + " " + informacion[0].SegundoNombre + " " + informacion[0].PrimerApellido + " " + informacion[0].SegundoApellido
-
-	return nombre_persona, nil
-}
-
-func ObtenerItemsEvaluador(asignacion_evaluador_id int) (items_evaluador string, outputError error) {
-	defer func() {
-		if err := recover(); err != nil {
-			outputError = fmt.Errorf("%v", err)
-			panic(outputError.Error())
-		}
-	}()
-
-	var respuesta_items_evaluador map[string]interface{}
-	var items []models.AsignacionEvaluadorItem
-
-	if response, err := helpers.GetJsonTest(beego.AppConfig.String("UrlEvaluacionesCumplidosProveedoresCrud")+"/asignacion_evaluador_item/?query=AsignacionEvaluadorId.Id:"+strconv.Itoa(asignacion_evaluador_id)+",Activo:true&limit=-1", &respuesta_items_evaluador); err != nil && response != 200 {
-		outputError = fmt.Errorf("Error al obtener los items del evaluador")
-		return items_evaluador, outputError
-	}
-
-	helpers.LimpiezaRespuestaRefactor(respuesta_items_evaluador, &items)
-
-	for _, item := range items {
-		items_evaluador += strconv.Itoa(item.Id) + ", "
-	}
-
-	return strings.TrimSuffix(items_evaluador, ", "), nil
 }
