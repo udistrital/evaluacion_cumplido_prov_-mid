@@ -33,18 +33,13 @@ func (c *EvaluacionController) CambiarEstadoEvaluacion() {
 	fmt.Println(v)
 	response, err := services.CambioEstadoEvaluacion(v.EvaluacionId.Id, v.AbreviacionEstado)
 
-	if err != nil {
-		c.Ctx.Output.SetStatus(400)
-		c.Data["json"] = requestresponse.APIResponseDTO(false, 400, nil, err.Error())
-	}
-
 	if err == nil {
 
 		c.Ctx.Output.SetStatus(200)
-		c.Data["json"] = requestresponse.APIResponseDTO(true, 200, response, "Cambio de estado exitoso")
+		c.Data["json"] = requestresponse.APIResponseDTO(true, 200, nil, response)
 	} else {
 		c.Ctx.Output.SetStatus(400)
-		c.Data["json"] = requestresponse.APIResponseDTO(false, 400, err)
+		c.Data["json"] = requestresponse.APIResponseDTO(false, 400, nil, err.Error())
 	}
 	c.ServeJSON()
 }

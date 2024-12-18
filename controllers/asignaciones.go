@@ -31,18 +31,13 @@ func (c *AsignacionesController) ConsultarAsignaciones() {
 	defer errorhandler.HandlePanic(&c.Controller)
 	response, err := services.ObtenerListaDeAsignaciones(c.Ctx.Input.Param(":numeroDocumento"))
 
-	if err != nil {
-		c.Ctx.Output.SetStatus(400)
-		c.Data["json"] = requestresponse.APIResponseDTO(false, 400, nil, err.Error())
-	}
-
 	if err == nil {
 
 		c.Ctx.Output.SetStatus(200)
-		c.Data["json"] = requestresponse.APIResponseDTO(true, 200, response, "Busqueda exitosa")
+		c.Data["json"] = requestresponse.APIResponseDTO(true, 200, nil, response)
 	} else {
 		c.Ctx.Output.SetStatus(400)
-		c.Data["json"] = requestresponse.APIResponseDTO(false, 400, err)
+		c.Data["json"] = requestresponse.APIResponseDTO(false, 400, nil, err.Error())
 	}
 	c.ServeJSON()
 }
@@ -61,18 +56,13 @@ func (c *AsignacionesController) CambiarEstadoAsignacionEvaluacion() {
 	fmt.Println(v)
 	response, err := services.CambioEstadoAsignacionEvaluacion(v.AsignacionId.Id, v.AbreviacionEstado)
 
-	if err != nil {
-		c.Ctx.Output.SetStatus(400)
-		c.Data["json"] = requestresponse.APIResponseDTO(false, 400, nil, err.Error())
-	}
-
 	if err == nil {
 
 		c.Ctx.Output.SetStatus(200)
-		c.Data["json"] = requestresponse.APIResponseDTO(true, 200, response, "Cambio de estado exitoso")
+		c.Data["json"] = requestresponse.APIResponseDTO(true, 200, nil, response)
 	} else {
 		c.Ctx.Output.SetStatus(400)
-		c.Data["json"] = requestresponse.APIResponseDTO(false, 400, err)
+		c.Data["json"] = requestresponse.APIResponseDTO(false, 400, nil, err.Error())
 	}
 	c.ServeJSON()
 }
