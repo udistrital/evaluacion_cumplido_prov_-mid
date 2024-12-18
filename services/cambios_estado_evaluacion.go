@@ -36,7 +36,7 @@ func CambioEstadoEvaluacion(id_evaluacion int, codigo_estado string) (mapRespons
 		"PRE": {"AEV"},
 	}
 
-	lista_asignable, existe := verificarSecuenciaEvaluacion(estados_asignables, codigo_estado)
+	lista_asignable, existe := verificarSecuenciaEvaluacion(estados_asignables, estado_actual.EstadoEvaluacionId.CodigoAbreviacion)
 
 	if !existe {
 		outputError = fmt.Errorf("el estado %s no se puede asignar, no se encuentra en la lista de asignables", estado_actual.EstadoEvaluacionId.CodigoAbreviacion)
@@ -46,6 +46,18 @@ func CambioEstadoEvaluacion(id_evaluacion int, codigo_estado string) (mapRespons
 	existe_en_slice := verificarSliceEvaluacion(lista_asignable, estado_a_asignar.CodigoAbreviacion)
 
 	if existe_en_slice {
+
+		err = DesabilitarEstadoEvaluacion(estado_actual)
+		if err != nil {
+			outputError = fmt.Errorf("error al desabilitar el estado")
+			return nil, outputError
+		}
+
+		err = AgregarEstadoEvaluacion(codigo_estado, estado_a_asignar.Id)
+		if err != nil {
+			outputError = fmt.Errorf("error al agregar el estado")
+			return nil, outputError
+		}
 
 		if codigo_estado == "EPR" {
 
@@ -62,18 +74,6 @@ func CambioEstadoEvaluacion(id_evaluacion int, codigo_estado string) (mapRespons
 
 			}
 
-		}
-
-		err = DesabilitarEstadoEvaluacion(estado_actual)
-		if err != nil {
-			outputError = fmt.Errorf("error al desabilitar el estado")
-			return nil, outputError
-		}
-
-		err = AgregarEstadoEvaluacion(codigo_estado, estado_a_asignar.Id)
-		if err != nil {
-			outputError = fmt.Errorf("error al agregar el estado")
-			return nil, outputError
 		}
 
 		mapResponse := make(map[string]interface{})
