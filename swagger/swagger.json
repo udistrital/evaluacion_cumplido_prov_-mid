@@ -5,6 +5,64 @@
     },
     "basePath": "/v1",
     "paths": {
+        "/asignaciones/cambiar-estado/": {
+            "post": {
+                "tags": [
+                    "asignaciones"
+                ],
+                "operationId": "AsignacionesController.CambiarEstadoAsignacion por documento supervisor",
+                "parameters": [
+                    {
+                        "in": "de",
+                        "name": "Nmero",
+                        "description": "path",
+                        "schema": {
+                            "$ref": "#/definitions/numeroDocumento"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/models.CambioEstadoCumplidoResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "{object} map[string]interface{}"
+                    }
+                }
+            }
+        },
+        "/asignaciones/consultar/{numeroDocumento}": {
+            "get": {
+                "tags": [
+                    "asignaciones"
+                ],
+                "operationId": "AsignacionesController.ConsultarAsignaciones por documento supervisor",
+                "parameters": [
+                    {
+                        "in": "de",
+                        "name": "Nmero",
+                        "description": "path",
+                        "schema": {
+                            "$ref": "#/definitions/numeroDocumento"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/models.CambioEstadoCumplidoResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "{object} map[string]interface{}"
+                    }
+                }
+            }
+        },
         "/cambio-rol-evaluador/{idEvaluacion}": {
             "post": {
                 "tags": [
@@ -41,12 +99,12 @@
                 ]
             }
         },
-        "/consultar-asignaciones/{numeroDocumento}": {
-            "get": {
+        "/evaluacion/cambiar-estado/": {
+            "post": {
                 "tags": [
-                    "consultar-asignaciones"
+                    "evaluacion"
                 ],
-                "operationId": "ConsultarAsignacionesController.ConsultarAsignaciones por documento supervisor",
+                "operationId": "EvaluacionController.CambiarEstadoEvaluacion por documento supervisor",
                 "parameters": [
                     {
                         "in": "de",
@@ -132,11 +190,11 @@
         }
     },
     "definitions": {
-        "10169.0xc000510b40.false": {
+        "10746.0xc000570e10.false": {
             "title": "false",
             "type": "object"
         },
-        "10265.0xc000510ba0.false": {
+        "10842.0xc000570e70.false": {
             "title": "false",
             "type": "object"
         },
@@ -159,13 +217,13 @@
                 "Evaluadores": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/10169.0xc000510b40.false"
+                        "$ref": "#/definitions/10746.0xc000570e10.false"
                     }
                 },
                 "Resultados": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/10265.0xc000510ba0.false"
+                        "$ref": "#/definitions/10842.0xc000570e70.false"
                     }
                 }
             }
@@ -181,7 +239,7 @@
             "description": "Carga-Data-ExcelController operations for Carga-Data-Excel\n"
         },
         {
-            "name": "consultar-asignaciones",
+            "name": "asignaciones",
             "description": "Consultar-Asignaciones-Controller operations for Consultar-Asignaciones-Controller\n"
         }
     ]

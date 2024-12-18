@@ -1,31 +1,37 @@
 package controllers
 
 import (
+	"encoding/json"
+	"fmt"
+
 	"github.com/astaxie/beego"
+	"github.com/udistrital/evaluacion_cumplido_prov_mid/models"
 	"github.com/udistrital/evaluacion_cumplido_prov_mid/services"
 	"github.com/udistrital/utils_oas/errorhandler"
 	"github.com/udistrital/utils_oas/requestresponse"
 )
 
-// Consultar-Asignaciones-Controller operations for Consultar-Asignaciones-Controller
-type ConsultarAsignacionesController struct {
+type EvaluacionController struct {
 	beego.Controller
 }
 
-// URLMapping ...
-func (c *ConsultarAsignacionesController) URLMapping() {
-	c.Mapping("ConsultarAsignaciones", c.ConsultarAsignaciones)
+func (c *EvaluacionController) URLMapping() {
+	c.Mapping("CambiarEstadoEvaluacion", c.CambiarEstadoEvaluacion)
 }
 
-// @Title ConsultarAsignaciones por documento supervisor
+// @Title CambiarEstadoEvaluacion por documento supervisor
 // @Param Nmero de numeroDocumento path 	string	true "numeroDocumento"
 // @Success 200 {object} models.CambioEstadoCumplidoResponse
 // @Failure 404 {object} map[string]interface{}
-// @router /:numeroDocumento [get]
-func (c *ConsultarAsignacionesController) ConsultarAsignaciones() {
-
+// @router /cambiar-estado/ [post]
+func (c *EvaluacionController) CambiarEstadoEvaluacion() {
 	defer errorhandler.HandlePanic(&c.Controller)
-	response, err := services.ObtenerListaDeAsignaciones(c.Ctx.Input.Param(":numeroDocumento"))
+
+	var v models.PeticionCambioEstadoEvaluacion
+	json.Unmarshal(c.Ctx.Input.RequestBody, &v)
+
+	fmt.Println(v)
+	response, err := services.CambioEstadoEvaluacion(v.EvaluacionId.Id, v.AbreviacionEstado)
 
 	if err != nil {
 		c.Ctx.Output.SetStatus(400)
@@ -35,7 +41,7 @@ func (c *ConsultarAsignacionesController) ConsultarAsignaciones() {
 	if err == nil {
 
 		c.Ctx.Output.SetStatus(200)
-		c.Data["json"] = requestresponse.APIResponseDTO(true, 200, response, "Busqueda exitosa")
+		c.Data["json"] = requestresponse.APIResponseDTO(true, 200, response, "Cambio de estado exitoso")
 	} else {
 		c.Ctx.Output.SetStatus(400)
 		c.Data["json"] = requestresponse.APIResponseDTO(false, 400, err)

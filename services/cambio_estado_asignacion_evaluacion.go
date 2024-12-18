@@ -78,6 +78,20 @@ func CambioEstadoAsignacionEvaluacion(id_asiganacion int, codigo_estado string) 
 
 	if existe_en_slice {
 
+		err := desabilitarEstadoAsignacion(estado_asignacion_actual)
+
+		if err != nil {
+			outputError = fmt.Errorf("error al desabilitar dea assignacion el estado")
+			return nil, outputError
+		}
+
+		err = agregarEstadoAsignacion(codigo_estado, id_asiganacion)
+
+		if err != nil {
+			outputError = fmt.Errorf("error al agregar estado de asignacion")
+			return nil, outputError
+		}
+
 		if codigo_estado == "ER" {
 			cambiar_estado_evaluacion, err := VerificarYCambiarEstadoEvaluacion(estado_asignacion_actual.AsignacionEvaluadorId.EvaluacionId.Id, codigo_estado)
 
@@ -119,7 +133,7 @@ func CambioEstadoAsignacionEvaluacion(id_asiganacion int, codigo_estado string) 
 					return nil, outputError
 				}
 
-				_, err = CambioEstadoEvaluacion(estado_asignacion_actual.AsignacionEvaluadorId.EvaluacionId.Id, "EAV")
+				_, err = CambioEstadoEvaluacion(estado_asignacion_actual.AsignacionEvaluadorId.EvaluacionId.Id, "AEV")
 
 				if err != nil {
 					outputError = fmt.Errorf("error al cambiar el estado de la evaluacion")
@@ -130,23 +144,12 @@ func CambioEstadoAsignacionEvaluacion(id_asiganacion int, codigo_estado string) 
 
 		}
 
-		err := desabilitarEstadoAsignacion(estado_asignacion_actual)
-
-		if err != nil {
-			outputError = fmt.Errorf("error al desabilitar dea assignacion el estado")
-			return nil, outputError
-		}
-
-		err = agregarEstadoAsignacion(codigo_estado, id_asiganacion)
-
-		if err != nil {
-			outputError = fmt.Errorf("error al agregar estado de asignacion")
-			return nil, outputError
-		}
-
 		mapResponse := make(map[string]interface{})
 		mapResponse["Message"] = fmt.Sprintf("Se cambio  el estado de %s a %s", estado_asignacion_actual.EstadoAsignacionEvaluador.CodigoAbreviacion, codigo_estado)
 		return mapResponse, nil
+	} else {
+		outputError = fmt.Errorf("error al asignar  estado de asignacion")
+		return nil, outputError
 	}
 	return nil, outputError
 }
@@ -220,6 +223,7 @@ func ConsultarEstadoActualAsingacion(id_asiganacion int) (estado_asignacion *mod
 	var cambio_estado_asignacion_evaluador []models.CambioEstadoASignacionEnvaluacion
 
 	query := fmt.Sprintf("/cambio_estado_asignacion_evaluador/?query=AsignacionEvaluadorId.Id:%d,Activo:true", id_asiganacion)
+
 	if response, err := helpers.GetJsonWSO2Test(beego.AppConfig.String("urlEvaluacionCumplidosCrud")+query, &respuestaPeticion); err == nil && response == 200 {
 
 		helpers.LimpiezaRespuestaRefactor(respuestaPeticion, &cambio_estado_asignacion_evaluador)
