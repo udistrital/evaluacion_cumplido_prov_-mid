@@ -36,7 +36,7 @@ func (c *DocumentoEvaluacionController) GenerarDocumentoEvaluacion() {
 		c.Data["json"] = requestresponse.APIResponseDTO(true, 200, "Documento generado correctamente")
 	} else {
 		c.Ctx.Output.SetStatus(404)
-		c.Data["json"] = requestresponse.APIResponseDTO(false, 404, err)
+		c.Data["json"] = requestresponse.APIResponseDTO(false, 404, nil, err.Error())
 	}
 	c.ServeJSON()
 }

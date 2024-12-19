@@ -128,12 +128,76 @@
                 }
             }
         },
+        "/evaluacion-cumplido/{evaluacion_id}": {
+            "get": {
+                "tags": [
+                    "evaluacion-cumplido"
+                ],
+                "description": "Upload evaluations to completed contracts by evaluacion_id",
+                "operationId": "EvaluacionCumplidoController.SubirEvaluacionCumplido",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "evaluacion_id",
+                        "description": "ID of the evaluation to upload",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.CumplidoProveedor"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": ":evaluacion_id is invalid"
+                    },
+                    "404": {
+                        "description": "No valid completed contracts found"
+                    }
+                }
+            }
+        },
+        "/informacion-evaluacion/{asignacion_id}": {
+            "get": {
+                "tags": [
+                    "informacion-evaluacion"
+                ],
+                "description": "get InformacionEvaluacionController by asignacion_id",
+                "operationId": "InformacionEvaluacionController.ObtenerInformacionEvaluacion",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "description": "The key for staticblock",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/models.InformacionEvaluacion"
+                        }
+                    },
+                    "400": {
+                        "description": ":id is empty"
+                    }
+                }
+            }
+        },
         "/resultado-final-evaluacion/{evaluacion_id}": {
             "get": {
                 "tags": [
                     "resultado-final-evaluacion"
                 ],
-                "description": "Crea el pdf de la evaluación\n\u003cbr\u003e",
+                "description": "Crea el pdf de la evaluación",
                 "operationId": "DocumentoEvaluacionController.GenerarDocumentoEvaluacion",
                 "parameters": [
                     {
@@ -162,7 +226,7 @@
                 "tags": [
                     "resultado"
                 ],
-                "description": "Guarda el resultado de una evaluación de cumplimiento de proveedor\n\u003cbr\u003e",
+                "description": "Guarda el resultado de una evaluación de cumplimiento de proveedor",
                 "operationId": "ResultadoEvaluacionController.GuardarResultadoEvaluacion",
                 "parameters": [
                     {
@@ -190,7 +254,16 @@
         }
     },
     "definitions": {
-        "10746.0xc000570e10.false": {
+        "11579.0xc0003e2090.false": {
+            "title": "false",
+            "type": "object"
+        },
+        "11669.0xc0003e20f0.false": {
+            "title": "false",
+            "type": "object"
+        },
+        "1452.0xc0003aedb0.false": {
+        "10169.0xc000510b40.false": {
             "title": "false",
             "type": "object"
         },
@@ -209,6 +282,213 @@
         "models.CambioEstadoCumplidoResponse": {
             "title": "CambioEstadoCumplidoResponse",
             "type": "object"
+        },
+        "models.CumplidoProveedor": {
+            "title": "CumplidoProveedor",
+            "type": "object",
+            "properties": {
+                "Activo": {
+                    "type": "boolean"
+                },
+                "FechaCreacion": {
+                    "type": "string",
+                    "format": "datetime"
+                },
+                "FechaModificacion": {
+                    "type": "string",
+                    "format": "datetime"
+                },
+                "Id": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "NumeroContrato": {
+                    "type": "string"
+                },
+                "VigenciaContrato": {
+                    "type": "integer",
+                    "format": "int64"
+                }
+            }
+        },
+        "models.Evaluacion": {
+            "title": "Evaluacion",
+            "type": "object",
+            "properties": {
+                "Activo": {
+                    "type": "boolean"
+                },
+                "ContratoSuscritoId": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "DocumentoId": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "FechaCreacion": {
+                    "type": "string",
+                    "format": "datetime"
+                },
+                "FechaModificacion": {
+                    "type": "string",
+                    "format": "datetime"
+                },
+                "Id": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "VigenciaContrato": {
+                    "type": "integer",
+                    "format": "int64"
+                }
+            }
+        },
+        "models.Evaluador": {
+            "title": "Evaluador",
+            "type": "object",
+            "properties": {
+                "Cargo": {
+                    "type": "string"
+                },
+                "Documento": {
+                    "type": "string"
+                },
+                "EstadoEvaluacion": {
+                    "type": "string"
+                },
+                "ItemEvaluado": {
+                    "type": "string"
+                },
+                "Observaciones": {
+                    "type": "string"
+                },
+                "PorcentajeEvaluacion": {
+                    "type": "number",
+                    "format": "double"
+                },
+                "PuntajeEvaluacion": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "Rol": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.InformacionEvaluacion": {
+            "title": "InformacionEvaluacion",
+            "type": "object",
+            "properties": {
+                "Cargo": {
+                    "type": "string"
+                },
+                "Clasificacion": {
+                    "type": "string"
+                },
+                "CodigoAbreviacionRol": {
+                    "type": "string"
+                },
+                "DependenciaEvaluadora": {
+                    "type": "string"
+                },
+                "EmpresaProveedor": {
+                    "type": "string"
+                },
+                "Evaluadores": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Evaluador"
+                    }
+                },
+                "FechaEvaluacion": {
+                    "type": "string"
+                },
+                "ItemsEvaluados": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Item"
+                    }
+                },
+                "NombreEvaluador": {
+                    "type": "string"
+                },
+                "ObjetoContrato": {
+                    "type": "string"
+                },
+                "PuntajeTotalEvaluacion": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "ResultadoEvaluacion": {
+                    "$ref": "#/definitions/models.Resultado"
+                }
+            }
+        },
+        "models.Item": {
+            "title": "Item",
+            "type": "object",
+            "properties": {
+                "Activo": {
+                    "type": "boolean"
+                },
+                "Cantidad": {
+                    "type": "number",
+                    "format": "double"
+                },
+                "EvaluacionId": {
+                    "$ref": "#/definitions/models.Evaluacion"
+                },
+                "FechaCreacion": {
+                    "type": "string",
+                    "format": "datetime"
+                },
+                "FechaModificacion": {
+                    "type": "string",
+                    "format": "datetime"
+                },
+                "FichaTecnica": {
+                    "type": "string"
+                },
+                "Id": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "Identificador": {
+                    "type": "string"
+                },
+                "Iva": {
+                    "type": "number",
+                    "format": "double"
+                },
+                "Nombre": {
+                    "type": "string"
+                },
+                "TipoNecesidad": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "Unidad": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "ValorUnitario": {
+                    "type": "number",
+                    "format": "double"
+                }
+            }
+        },
+        "models.Resultado": {
+            "title": "Resultado",
+            "type": "object",
+            "properties": {
+                "ResultadosIndividuales": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/1452.0xc0003aedb0.false"
+                    }
+                }
+            }
         },
         "models.ResultadoFinalEvaluacion": {
             "title": "ResultadoFinalEvaluacion",

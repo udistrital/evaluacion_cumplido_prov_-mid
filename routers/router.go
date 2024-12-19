@@ -24,6 +24,16 @@ func init() {
 				&controllers.DocumentoEvaluacionController{},
 			),
 		),
+		beego.NSNamespace("/informacion-evaluacion",
+			beego.NSInclude(
+				&controllers.InformacionEvaluacionController{},
+			),
+		),
+		beego.NSNamespace("/evaluacion-cumplido",
+			beego.NSInclude(
+				&controllers.EvaluacionCumplidoController{},
+			),
+		),
 		beego.NSNamespace("/asignaciones",
 			beego.NSInclude(
 				&controllers.AsignacionesController{},
