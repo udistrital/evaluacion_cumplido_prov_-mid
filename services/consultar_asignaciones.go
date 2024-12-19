@@ -76,7 +76,7 @@ func ObtenerListaDeAsignaciones(documento string) (mapResponse map[string]interf
 		contratosDepedencia = append(contratosDepedencia, contratoGeneral...)
 	}
 
-	listaSinAsignaciones, err := consulartSingAsinganaciones(contratosDepedencia)
+	listaSinAsignaciones, err := consulartAsingAsinganaciones(contratosDepedencia)
 
 	if err != nil {
 		return nil, fmt.Errorf("Error al consultar asignaciones")
@@ -87,7 +87,7 @@ func ObtenerListaDeAsignaciones(documento string) (mapResponse map[string]interf
 	return mapResponse, nil
 }
 
-func consulartSingAsinganaciones(contratosDepedencia []models.ContratoGeneral) (listaSinAsignaciones []models.AsignacionEvaluacion, outputError error) {
+func consulartAsingAsinganaciones(contratosDepedencia []models.ContratoGeneral) (listaSinAsignaciones []models.AsignacionEvaluacion, outputError error) {
 
 	for _, contrato := range contratosDepedencia {
 
@@ -190,15 +190,15 @@ func obtenerProveedor(contratistaId int, asignacion models.AsignacionEvaluador, 
 		nombre_dependencia, _ := obtenerDependencia(contratoGeneral.Supervisor.DependenciaSupervisor)
 		estadoEvaluacion, _ := ObtenerEstadoEvaluacion(asignacion.EvaluacionId.Id)
 		asignacionEvaluacion := models.AsignacionEvaluacion{
-			AsignacionEvaluacionId:    asignacion.Id,
-			NombreProveedor:           listaProveedor[0].NomProveedor,
-			Dependencia:               nombre_dependencia,
-			TipoContrato:              contratoGeneral.TipoContrato.TipoContrato,
-			NumeroContrato:            contratoGeneral.ContratoSuscrito[0].NumeroContratoSuscrito,
-			VigenciaContrato:          strconv.Itoa(contratoGeneral.VigenciaContrato),
-			EvaluacionId:              asignacion.EvaluacionId.Id,
-			EstadoAsignacionEvauacion: estado[0].EstadoAsignacionEvaluador,
-			EstadoEvaluacion:          &estadoEvaluacion,
+			AsignacionEvaluacionId:     asignacion.Id,
+			NombreProveedor:            listaProveedor[0].NomProveedor,
+			Dependencia:                nombre_dependencia,
+			TipoContrato:               contratoGeneral.TipoContrato.TipoContrato,
+			NumeroContrato:             contratoGeneral.ContratoSuscrito[0].NumeroContratoSuscrito,
+			VigenciaContrato:           strconv.Itoa(contratoGeneral.VigenciaContrato),
+			EvaluacionId:               asignacion.EvaluacionId.Id,
+			EstadoAsignacionEvaluacion: estado[0].EstadoAsignacionEvaluador,
+			EstadoEvaluacion:           &estadoEvaluacion,
 		}
 		asisgnaciones = asignacionEvaluacion
 	} else {
