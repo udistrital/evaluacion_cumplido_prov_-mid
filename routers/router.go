@@ -19,17 +19,17 @@ func init() {
 				&controllers.ResultadoEvaluacionController{},
 			),
 		),
-		beego.NSNamespace("/resultado-final-evaluacion",
+		beego.NSNamespace("/resultado_final-evaluacion",
 			beego.NSInclude(
 				&controllers.DocumentoEvaluacionController{},
 			),
 		),
-		beego.NSNamespace("/informacion-evaluacion",
+		beego.NSNamespace("/informacion_evaluacion",
 			beego.NSInclude(
 				&controllers.InformacionEvaluacionController{},
 			),
 		),
-		beego.NSNamespace("/evaluacion-cumplido",
+		beego.NSNamespace("/evaluacion_cumplido",
 			beego.NSInclude(
 				&controllers.EvaluacionCumplidoController{},
 			),
@@ -39,7 +39,7 @@ func init() {
 				&controllers.AsignacionesController{},
 			),
 		),
-		beego.NSNamespace("/cambio-rol-evaluador",
+		beego.NSNamespace("/cambio_rol_evaluador",
 			beego.NSInclude(
 				&controllers.CambioRolEvaluadorController{},
 			),
@@ -47,6 +47,11 @@ func init() {
 		beego.NSNamespace("/evaluacion",
 			beego.NSInclude(
 				&controllers.EvaluacionController{},
+			),
+		),
+		beego.NSNamespace("/firma_electronica",
+			beego.NSInclude(
+				&controllers.FirmaElectronica{},
 			),
 		))
 
