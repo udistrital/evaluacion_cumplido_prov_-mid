@@ -79,7 +79,7 @@ func ObtenerListaDeAsignaciones(documento string) (mapResponse map[string]interf
 	listaSinAsignaciones, err := consulartAsingAsinganaciones(contratosDepedencia)
 
 	if err != nil {
-		return nil, fmt.Errorf("Error al consultar asignaciones")
+		return nil, fmt.Errorf("error al consultar asignaciones")
 	}
 
 	mapResponse["Asignaciones"] = listaAsignaciones
