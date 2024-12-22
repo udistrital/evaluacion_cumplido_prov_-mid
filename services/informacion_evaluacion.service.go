@@ -22,8 +22,8 @@ func ObtenerInformacionEvaluacion(asignacion_evaluacion_id string) (informacion_
 	var asignacion_evaluadores []models.AsignacionEvaluador
 
 	// Se Busca la asignacion evaluador por id
-	//fmt.Println("Url asignacion evaluador: ", beego.AppConfig.String("UrlEvaluacionesCumplidosProveedoresCrud")+"/asignacion_evaluador/?query=Id:"+asignacion_evaluacion_id+",Activo:true&limit=-1")
-	if response, err := helpers.GetJsonTest(beego.AppConfig.String("UrlEvaluacionesCumplidosProveedoresCrud")+"/asignacion_evaluador/?query=Id:"+asignacion_evaluacion_id+",Activo:true&limit=-1", &respuesta_asignacion_evaluador); err != nil && response != 200 {
+	// fmt.Println("Url asignacion evaluador: ", beego.AppConfig.String("urlEvaluacionCumplidosCrud")+"/asignacion_evaluador/?query=Id:"+asignacion_evaluacion_id+",Activo:true&limit=-1")
+	if response, err := helpers.GetJsonTest(beego.AppConfig.String("urlEvaluacionCumplidosCrud")+"/asignacion_evaluador/?query=Id:"+asignacion_evaluacion_id+",Activo:true&limit=-1", &respuesta_asignacion_evaluador); err != nil && response != 200 {
 		outputError = fmt.Errorf("Error al obtener la asignación del evaluador")
 		return informacion_evaluacion, outputError
 	}
@@ -224,7 +224,7 @@ func ObtenerEvaluadores(asignacion_evaluador models.AsignacionEvaluador) (evalua
 		var cambio_estado_asignacion_evaluador []models.CambioEstadoAsignacionEvaluador
 
 		// Obtener el estado de la evaluacion de cada evaluador
-		if response, err := helpers.GetJsonTest(beego.AppConfig.String("UrlEvaluacionesCumplidosProveedoresCrud")+"/cambio_estado_asignacion_evaluador/?query=AsignacionEvaluadorId.Id:"+strconv.Itoa(asignacion_evaluador.Id)+",Activo:true&limit=-1&sortby=FechaCreacion&order=desc", &respuesta_cambio_estado_asignacion_evaluador); err != nil && response != 200 {
+		if response, err := helpers.GetJsonTest(beego.AppConfig.String("urlEvaluacionCumplidosCrud")+"/cambio_estado_asignacion_evaluador/?query=AsignacionEvaluadorId.Id:"+strconv.Itoa(asignacion_evaluador.Id)+",Activo:true&limit=-1&sortby=FechaCreacion&order=desc", &respuesta_cambio_estado_asignacion_evaluador); err != nil && response != 200 {
 			outputError = fmt.Errorf("Error al obtener el cambio de estado de la asignación del evaluador")
 			return evaluadores, outputError
 		}

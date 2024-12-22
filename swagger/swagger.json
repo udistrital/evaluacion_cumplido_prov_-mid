@@ -63,10 +63,10 @@
                 }
             }
         },
-        "/cambio-rol-evaluador/{idEvaluacion}": {
+        "/cambio_rol_evaluador/{idEvaluacion}": {
             "post": {
                 "tags": [
-                    "cambio-rol-evaluador"
+                    "cambio_rol_evaluador"
                 ],
                 "operationId": "CambioRolEvaluadorController.CambiarRolAsignacionEvaluador",
                 "parameters": [
@@ -128,12 +128,12 @@
                 }
             }
         },
-        "/evaluacion-cumplido/{evaluacion_id}": {
+        "/evaluacion_cumplido/{evaluacion_id}": {
             "get": {
                 "tags": [
-                    "evaluacion-cumplido"
+                    "evaluacion_cumplido"
                 ],
-                "description": "Upload evaluations to completed contracts by evaluacion_id",
+                "description": "Upload evaluations to completed contracts by evaluacion_id\n\u003cbr\u003e",
                 "operationId": "EvaluacionCumplidoController.SubirEvaluacionCumplido",
                 "parameters": [
                     {
@@ -163,12 +163,20 @@
                 }
             }
         },
-        "/informacion-evaluacion/{asignacion_id}": {
+        "/firma_electronica/firmar_evaluacion/": {
+            "post": {
+                "tags": [
+                    "firma_electronica"
+                ],
+                "operationId": "FirmaElectronica.FirmarDocumento"
+            }
+        },
+        "/informacion_evaluacion/{asignacion_id}": {
             "get": {
                 "tags": [
-                    "informacion-evaluacion"
+                    "informacion_evaluacion"
                 ],
-                "description": "get InformacionEvaluacionController by asignacion_id",
+                "description": "get InformacionEvaluacionController by asignacion_id\n\u003cbr\u003e",
                 "operationId": "InformacionEvaluacionController.ObtenerInformacionEvaluacion",
                 "parameters": [
                     {
@@ -192,41 +200,12 @@
                 }
             }
         },
-        "/resultado-final-evaluacion/{evaluacion_id}": {
-            "get": {
-                "tags": [
-                    "resultado-final-evaluacion"
-                ],
-                "description": "Crea el pdf de la evaluación",
-                "operationId": "DocumentoEvaluacionController.GenerarDocumentoEvaluacion",
-                "parameters": [
-                    {
-                        "in": "path",
-                        "name": "id",
-                        "description": "Id de la evaluación",
-                        "required": true,
-                        "type": "string"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "",
-                        "schema": {
-                            "$ref": "#/definitions/models.ResultadoFinalEvaluacion"
-                        }
-                    },
-                    "404": {
-                        "description": "{object} map[string]interface{}"
-                    }
-                }
-            }
-        },
         "/resultado/resultado-evaluacion": {
             "post": {
                 "tags": [
                     "resultado"
                 ],
-                "description": "Guarda el resultado de una evaluación de cumplimiento de proveedor",
+                "description": "Guarda el resultado de una evaluación de cumplimiento de proveedor\n\u003cbr\u003e",
                 "operationId": "ResultadoEvaluacionController.GuardarResultadoEvaluacion",
                 "parameters": [
                     {
@@ -251,23 +230,47 @@
                     }
                 }
             }
+        },
+        "/resultado_final-evaluacion/{evaluacion_id}": {
+            "get": {
+                "tags": [
+                    "resultado_final-evaluacion"
+                ],
+                "description": "Crea el pdf de la evaluación\n\u003cbr\u003e",
+                "operationId": "DocumentoEvaluacionController.GenerarDocumentoEvaluacion",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "description": "Id de la evaluación",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResultadoFinalEvaluacion"
+                        }
+                    },
+                    "404": {
+                        "description": "{object} map[string]interface{}"
+                    }
+                }
+            }
         }
     },
     "definitions": {
-        "11579.0xc0003e2090.false": {
+        "2034.0xc00063e3c0.false": {
             "title": "false",
             "type": "object"
         },
-        "11669.0xc0003e20f0.false": {
+        "21548.0xc00067e4e0.false": {
             "title": "false",
             "type": "object"
         },
-        "1452.0xc0003aedb0.false": {
-        "10169.0xc000510b40.false": {
-            "title": "false",
-            "type": "object"
-        },
-        "10842.0xc000570e70.false": {
+        "21644.0xc00067e540.false": {
             "title": "false",
             "type": "object"
         },
@@ -485,7 +488,7 @@
                 "ResultadosIndividuales": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/1452.0xc0003aedb0.false"
+                        "$ref": "#/definitions/2034.0xc00063e3c0.false"
                     }
                 }
             }
@@ -497,13 +500,13 @@
                 "Evaluadores": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/10746.0xc000570e10.false"
+                        "$ref": "#/definitions/21548.0xc00067e4e0.false"
                     }
                 },
                 "Resultados": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/10842.0xc000570e70.false"
+                        "$ref": "#/definitions/21644.0xc00067e540.false"
                     }
                 }
             }
@@ -517,6 +520,14 @@
         {
             "name": "carga-data-excel",
             "description": "Carga-Data-ExcelController operations for Carga-Data-Excel\n"
+        },
+        {
+            "name": "informacion_evaluacion",
+            "description": "InformacionEvaluacionController operations for InformacionEvaluacionController\n"
+        },
+        {
+            "name": "evaluacion_cumplido",
+            "description": "EvaluacionCumplidoController handles operations for uploading evaluations\nto completed contracts.\n"
         },
         {
             "name": "asignaciones",
