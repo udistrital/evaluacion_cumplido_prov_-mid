@@ -33,7 +33,7 @@ func init() {
             MethodParams: param.Make(),
             Filters: nil,
             Params: nil})
-  
+
     beego.GlobalControllerRouter["github.com/udistrital/evaluacion_cumplido_prov_mid/controllers:CargaDataExcelController"] = append(beego.GlobalControllerRouter["github.com/udistrital/evaluacion_cumplido_prov_mid/controllers:CargaDataExcelController"],
         beego.ControllerComments{
             Method: "UploadExcel",
@@ -51,7 +51,16 @@ func init() {
             MethodParams: param.Make(),
             Filters: nil,
             Params: nil})
-  
+
+    beego.GlobalControllerRouter["github.com/udistrital/evaluacion_cumplido_prov_mid/controllers:EvaluacionController"] = append(beego.GlobalControllerRouter["github.com/udistrital/evaluacion_cumplido_prov_mid/controllers:EvaluacionController"],
+        beego.ControllerComments{
+            Method: "CambiarEstadoEvaluacion",
+            Router: "/cambiar-estado/",
+            AllowHTTPMethods: []string{"post"},
+            MethodParams: param.Make(),
+            Filters: nil,
+            Params: nil})
+
     beego.GlobalControllerRouter["github.com/udistrital/evaluacion_cumplido_prov_mid/controllers:EvaluacionCumplidoController"] = append(beego.GlobalControllerRouter["github.com/udistrital/evaluacion_cumplido_prov_mid/controllers:EvaluacionCumplidoController"],
         beego.ControllerComments{
             Method: "SubirEvaluacionCumplido",
@@ -61,20 +70,20 @@ func init() {
             Filters: nil,
             Params: nil})
 
+    beego.GlobalControllerRouter["github.com/udistrital/evaluacion_cumplido_prov_mid/controllers:FirmaElectronica"] = append(beego.GlobalControllerRouter["github.com/udistrital/evaluacion_cumplido_prov_mid/controllers:FirmaElectronica"],
+        beego.ControllerComments{
+            Method: "FirmarEvaluacion",
+            Router: "/firmar_evaluacion/",
+            AllowHTTPMethods: []string{"post"},
+            MethodParams: param.Make(),
+            Filters: nil,
+            Params: nil})
+
     beego.GlobalControllerRouter["github.com/udistrital/evaluacion_cumplido_prov_mid/controllers:InformacionEvaluacionController"] = append(beego.GlobalControllerRouter["github.com/udistrital/evaluacion_cumplido_prov_mid/controllers:InformacionEvaluacionController"],
         beego.ControllerComments{
             Method: "ObtenerInformacionEvaluacion",
             Router: "/:asignacion_id",
             AllowHTTPMethods: []string{"get"},
-            MethodParams: param.Make(),
-            Filters: nil,
-            Params: nil})
-
-    beego.GlobalControllerRouter["github.com/udistrital/evaluacion_cumplido_prov_mid/controllers:EvaluacionController"] = append(beego.GlobalControllerRouter["github.com/udistrital/evaluacion_cumplido_prov_mid/controllers:EvaluacionController"],
-        beego.ControllerComments{
-            Method: "CambiarEstadoEvaluacion",
-            Router: "/cambiar-estado/",
-            AllowHTTPMethods: []string{"post"},
             MethodParams: param.Make(),
             Filters: nil,
             Params: nil})

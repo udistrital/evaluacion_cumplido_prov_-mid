@@ -61,8 +61,7 @@ func ObtenerResultadoEvaluacion(asignacion_evaluacion_id int) (resultado_evaluac
 	var respuesta_resultado_evaluacion map[string]interface{}
 	var resultado []models.ResultadoEvaluacion
 
-	//fmt.Println("URL resultado evaluacion: ", beego.AppConfig.String("UrlEvaluacionesCumplidosProveedoresCrud")+"/resultado_evaluacion/?query=AsignacionEvaluadorId.Id:"+strconv.Itoa(asignacion_evaluacion_id)+",Activo:true&limit=1")
-	if response, err := GetJsonTest(beego.AppConfig.String("UrlEvaluacionesCumplidosProveedoresCrud")+"/resultado_evaluacion/?query=AsignacionEvaluadorId.Id:"+strconv.Itoa(asignacion_evaluacion_id)+",Activo:true&limit=1", &respuesta_resultado_evaluacion); err != nil && response != 200 {
+	if response, err := GetJsonTest(beego.AppConfig.String("urlEvaluacionCumplidosCrud")+"/resultado_evaluacion/?query=AsignacionEvaluadorId.Id:"+strconv.Itoa(asignacion_evaluacion_id)+",Activo:true&limit=1", &respuesta_resultado_evaluacion); err != nil && response != 200 {
 		outputError = fmt.Errorf("Error al obtener el resultado de la evaluación")
 		return resultado_evaluacion, outputError
 	}
@@ -91,7 +90,7 @@ func ObtenerItemsEvaluador(asignacion_evaluador_id int) (items_evaluador []model
 	var respuesta_items_evaluador map[string]interface{}
 	var items []models.AsignacionEvaluadorItem
 
-	if response, err := GetJsonTest(beego.AppConfig.String("UrlEvaluacionesCumplidosProveedoresCrud")+"/asignacion_evaluador_item/?query=AsignacionEvaluadorId.Id:"+strconv.Itoa(asignacion_evaluador_id)+",Activo:true&limit=-1", &respuesta_items_evaluador); err != nil && response != 200 {
+	if response, err := GetJsonTest(beego.AppConfig.String("urlEvaluacionCumplidosCrud")+"/asignacion_evaluador_item/?query=AsignacionEvaluadorId.Id:"+strconv.Itoa(asignacion_evaluador_id)+",Activo:true&limit=-1", &respuesta_items_evaluador); err != nil && response != 200 {
 		outputError = fmt.Errorf("Error al obtener los items del evaluador")
 		return items_evaluador, items_evaluador_formateados, outputError
 	}

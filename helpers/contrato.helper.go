@@ -81,8 +81,8 @@ func ObtenerNombrePersonaNatural(documento_persona string) (nombre_persona strin
 	}()
 
 	var informacion []models.InformacionPersonaNatural
-	//fmt.Println("Url informacion persona: ", beego.AppConfig.String("UrlAmazonApi")+"/informacion_persona_natural/?fields=PrimerNombre,SegundoNombre,PrimerApellido,SegundoApellido&limit=0&query=Id:"+documento_persona)
-	if response, err := GetJsonTest(beego.AppConfig.String("UrlAmazonApi")+"/informacion_persona_natural/?fields=PrimerNombre,SegundoNombre,PrimerApellido,SegundoApellido&limit=0&query=Id:"+documento_persona, &informacion); err != nil && response != 200 {
+	fmt.Println("Url informacion persona: ", beego.AppConfig.String("UrlcrudAgora")+"/informacion_persona_natural/?fields=PrimerNombre,SegundoNombre,PrimerApellido,SegundoApellido&limit=0&query=Id:"+documento_persona)
+	if response, err := GetJsonTest(beego.AppConfig.String("UrlcrudAgora")+"/informacion_persona_natural/?fields=PrimerNombre,SegundoNombre,PrimerApellido,SegundoApellido&limit=0&query=Id:"+documento_persona, &informacion); err != nil && response != 200 {
 		outputError = fmt.Errorf("Error al obtener la información de la persona")
 		return nombre_persona, outputError
 	}

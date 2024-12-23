@@ -29,12 +29,13 @@ func (c *AsignacionesController) URLMapping() {
 // @router /consultar/:numeroDocumento [get]
 func (c *AsignacionesController) ConsultarAsignaciones() {
 	defer errorhandler.HandlePanic(&c.Controller)
+
 	response, err := services.ObtenerListaDeAsignaciones(c.Ctx.Input.Param(":numeroDocumento"))
 
 	if err == nil {
 
 		c.Ctx.Output.SetStatus(200)
-		c.Data["json"] = requestresponse.APIResponseDTO(true, 200, nil, response)
+		c.Data["json"] = requestresponse.APIResponseDTO(true, 200, response, nil)
 	} else {
 		c.Ctx.Output.SetStatus(400)
 		c.Data["json"] = requestresponse.APIResponseDTO(false, 400, nil, err.Error())

@@ -55,6 +55,7 @@ func SendJson(url string, trequest string, target interface{}, datajson interfac
 	}
 	client := &http.Client{}
 	req, err := http.NewRequest(trequest, url, b)
+	req.Header.Set("Authorization", "Bearer "+"8eae7c3b-90dd-3f0d-9816-00ce30cab40b")
 	req.Header.Set("Content-Type", "application/json")
 	r, err := client.Do(req)
 	if err != nil {

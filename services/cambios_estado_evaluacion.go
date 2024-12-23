@@ -53,7 +53,7 @@ func CambioEstadoEvaluacion(id_evaluacion int, codigo_estado string) (mapRespons
 			return nil, outputError
 		}
 
-		err = AgregarEstadoEvaluacion(codigo_estado, estado_a_asignar.Id)
+		err = AgregarEstadoEvaluacion(codigo_estado, id_evaluacion)
 		if err != nil {
 			outputError = fmt.Errorf("error al agregar el estado")
 			return nil, outputError

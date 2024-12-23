@@ -223,7 +223,6 @@ func ConsultarEstadoActualAsingacion(id_asiganacion int) (estado_asignacion *mod
 	var cambio_estado_asignacion_evaluador []models.CambioEstadoASignacionEnvaluacion
 
 	query := fmt.Sprintf("/cambio_estado_asignacion_evaluador/?query=AsignacionEvaluadorId.Id:%d,Activo:true", id_asiganacion)
-
 	if response, err := helpers.GetJsonWSO2Test(beego.AppConfig.String("urlEvaluacionCumplidosCrud")+query, &respuestaPeticion); err == nil && response == 200 {
 
 		helpers.LimpiezaRespuestaRefactor(respuestaPeticion, &cambio_estado_asignacion_evaluador)
