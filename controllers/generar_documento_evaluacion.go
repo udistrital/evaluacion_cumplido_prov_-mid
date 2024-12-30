@@ -30,10 +30,10 @@ func (c *DocumentoEvaluacionController) GenerarDocumentoEvaluacion() {
 
 	id_evaluacion, _ := strconv.Atoi(evaluacion_id)
 
-	err := services.GenerarDocumentoEvaluacion(id_evaluacion)
+	data, err := services.ObtenerResultadoFinalEvaluacion(id_evaluacion)
 	if err == nil {
 		c.Ctx.Output.SetStatus(200)
-		c.Data["json"] = requestresponse.APIResponseDTO(true, 200, "Documento generado correctamente")
+		c.Data["json"] = requestresponse.APIResponseDTO(true, 200, data, "Documento generado correctamente")
 	} else {
 		c.Ctx.Output.SetStatus(404)
 		c.Data["json"] = requestresponse.APIResponseDTO(false, 404, nil, err.Error())

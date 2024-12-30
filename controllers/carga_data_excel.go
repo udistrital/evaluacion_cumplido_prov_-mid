@@ -17,6 +17,14 @@ func (c *CargaDataExcelController) URLMapping() {
 	c.Mapping("UploadExcel", c.UploadExcel)
 }
 
+// UploadExcel handles the uploading of Excel files for evaluations.
+// @Title UploadExcel
+// @Description Upload an Excel file to process evaluation items by evaluacion_id
+// @Param   file           formData file    true  "Excel file containing the evaluation items"
+// @Param   idEvaluacion   formData int     true  "ID of the evaluation"
+// @Success 200 {object} map[string]interface{} "Items processed successfully"
+// @Failure 400 "Bad request: file or idEvaluacion is invalid"
+// @Failure 500 "Internal server error"
 // @router /upload [post]
 func (c *CargaDataExcelController) UploadExcel() {
 
@@ -31,7 +39,14 @@ func (c *CargaDataExcelController) UploadExcel() {
 
 	defer file.Close()
 
-	response, intemsNoAgregados, err := services.CargaDataExcel(file)
+	idEvaluacion, err := c.GetInt("idEvaluacion")
+	if err != nil {
+		c.Ctx.Output.SetStatus(400)
+		c.Data["json"] = requestresponse.APIResponseDTO(false, 400, nil, "El id de la evaluación es obligatorio")
+		return
+	}
+
+	response, intemsNoAgregados, err := services.CargaDataExcel(file, idEvaluacion)
 
 	responseMap := map[string]interface{}{
 		"itemsNoAgregados": intemsNoAgregados,

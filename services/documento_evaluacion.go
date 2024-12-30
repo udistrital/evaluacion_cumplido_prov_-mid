@@ -19,7 +19,7 @@ import (
 	excelize "github.com/xuri/excelize/v2"
 )
 
-func GenerarDocumentoEvaluacion(evaluacion_id int) (outputError error) {
+func GenerarDocumentoEvaluacion(evaluacion_id int) (excel models.ExcelEvaluacion, outputError error) {
 	defer func() {
 		if err := recover(); err != nil {
 			outputError = fmt.Errorf("%v", err)
@@ -30,15 +30,15 @@ func GenerarDocumentoEvaluacion(evaluacion_id int) (outputError error) {
 	informacion_evaluacion, error_informacion := ObtenerInformacionDocumento(evaluacion_id)
 	if error_informacion != nil {
 		outputError = fmt.Errorf(error_informacion.Error())
-		return outputError
+		return excel, outputError
 	}
 
 	// Abrir el archivo de la plantilla
-	filePath := "static/plantilla/plantilla.xlsx"
+	filePath := "static/plantilla/Plantilla_aprobada_de_evaluacion_proveedores.xlsx"
 	f, err := excelize.OpenFile(filePath)
 	if err != nil {
 		outputError = fmt.Errorf("Error al abrir el archivo")
-		return outputError
+		return excel, outputError
 	}
 
 	sheetName := "GC-PR-006-FR-028"
@@ -62,31 +62,73 @@ func GenerarDocumentoEvaluacion(evaluacion_id int) (outputError error) {
 
 	if err != nil {
 		outputError = fmt.Errorf("Error al crear el estilo")
-		return outputError
+		return excel, outputError
 	}
 
 	if err := f.SetCellStyle(sheetName, "D9", "D9", styleObjetoContrato); err != nil {
 		outputError = fmt.Errorf("Error al aplicar el estilo a la celda")
-		return outputError
+		return excel, outputError
 	}
 
 	// Registrar los resultados de la evaluación
 	if err := registrarResultadosEvaluacion(f, sheetName, informacion_evaluacion); err != nil {
 		outputError = fmt.Errorf("Error al registrar los resultados de la evaluación")
-		return outputError
+		return excel, outputError
 	}
+
+	// Registrar puntaje total por cada sección
+	valor_cumplimiento := obtenerValoresSeccion(f, []string{"F14", "F16"}, sheetName)
+	if err := f.SetCellValue(sheetName, "G14", valor_cumplimiento); err != nil {
+		outputError = fmt.Errorf("Error al establecer el valor de la celda")
+		return excel, outputError
+	}
+
+	valor_calidad := obtenerValoresSeccion(f, []string{"F18", "F20"}, sheetName)
+	if err := f.SetCellValue(sheetName, "G18", valor_calidad); err != nil {
+		outputError = fmt.Errorf("Error al establecer el valor de la celda")
+		return excel, outputError
+	}
+
+	valor_pos_contractual := obtenerValoresSeccion(f, []string{"F22", "F24", "F26"}, sheetName)
+	if err := f.SetCellValue(sheetName, "G22", valor_pos_contractual); err != nil {
+		outputError = fmt.Errorf("Error al establecer el valor de la celda")
+		return excel, outputError
+	}
+
+	valor_procedimiento := obtenerValoresSeccion(f, []string{"F28"}, sheetName)
+	if err := f.SetCellValue(sheetName, "G28", valor_procedimiento); err != nil {
+		outputError = fmt.Errorf("Error al establecer el valor de la celda")
+		return excel, outputError
+	}
+
+	valor_garantia := obtenerValoresSeccion(f, []string{"F32", "F34"}, sheetName)
+	if err := f.SetCellValue(sheetName, "G32", valor_garantia); err != nil {
+		outputError = fmt.Errorf("Error al establecer el valor de la celda")
+		return excel, outputError
+	}
+
+	valor_total := valor_cumplimiento + valor_calidad + valor_pos_contractual + valor_procedimiento + valor_garantia
+	if err := f.SetCellValue(sheetName, "G37", valor_total); err != nil {
+		outputError = fmt.Errorf("Error al establecer el valor de la celda")
+		return excel, outputError
+	}
+
+	// Registrar el tipo de proveedor
+	tipo_proveedor := ObtenetTipoProveedor(valor_total)
+
+	f.SetCellValue(sheetName, "G38", tipo_proveedor)
 
 	// Registrar los evaluadores
 	if err := registrarEvaluadores(f, sheetName, informacion_evaluacion); err != nil {
 		outputError = fmt.Errorf("Error al combinar celdas por evaluador")
-		return outputError
+		return excel, outputError
 	}
 
 	for _, cell := range []string{"D", "E", "F", "G"} {
 		widht, err := f.GetColWidth(sheetName, cell)
 		if err != nil {
 			outputError = fmt.Errorf("Error al obtener el ancho de la columna del objeto contrato")
-			return outputError
+			return excel, outputError
 		}
 		anchoColumna += widht
 	}
@@ -95,73 +137,43 @@ func GenerarDocumentoEvaluacion(evaluacion_id int) (outputError error) {
 	error_ajustar_alture := AjustarAlturaCelda(f, sheetName, "D9", informacion_evaluacion.ObjetoContrato, anchoColumna)
 	if error_ajustar_alture != nil {
 		outputError = fmt.Errorf("Error al ajustar la altura de la celda")
-		return outputError
+		return excel, outputError
 	}
 
-	if err := f.SaveAs(fmt.Sprintf("static/documento/evaluacion_%s.xlsx", informacion_evaluacion.EmpresaProveedor)); err != nil {
-		outputError = fmt.Errorf("Error al guardar el archivo")
-		return outputError
-	}
-
-	// Crear Pdf
-
-	// template, err := excelize.OpenFile(fmt.Sprintf("static/documento/evaluacion_%s.xlsx", informacion_evaluacion.EmpresaProveedor))
-	// if err != nil {
-	// 	fmt.Println(err)
-	// 	return
-	// }
-
-	// pdf := gofpdf.New("P", "mm", "A4", "")
-
-	// ExcelPdf := xlsx2pdf.Excel2PDF{
-	// 	Excel:    template,
-	// 	Pdf:      pdf,
-	// 	Sheets:   make(map[string]xlsx2pdf.SheetInfo),
-	// 	WFx:      2,
-	// 	HFx:      2.925,
-	// 	FontDims: xlsx2pdf.FontDims{Size: 0.85},
-	// 	Header:   func() {},
-	// 	Footer:   func() {},
-	// 	CustomSize: xlsx2pdf.PageFormat{
-	// 		Orientation: "P",
-	// 		Wd:          297,
-	// 		Ht:          210,
-	// 	},
-	// }
-
-	// dim, _ := template.GetSheetDimension(sheetName)
-	// _, maxrow, _ := excelize.CellNameToCoordinates(strings.Split(dim, ":")[1])
-	// for r := 1; r <= maxrow; r++ {
-	// 	h, _ := template.GetRowHeight(sheetName, r)
-	// 	template.SetRowHeight(sheetName, r, h*1.046)
-	// }
-
-	// ExcelPdf.ConvertSheets()
-
-	// Codificar el archivo en base64
-	// encodeFile, outputError := encodePDF(pdf)
-	// if outputError != nil {
+	// if err := f.SaveAs(fmt.Sprintf("static/documento/evaluacion_%s.xlsx", informacion_evaluacion.EmpresaProveedor)); err != nil {
+	// 	outputError = fmt.Errorf("Error al guardar el archivo")
 	// 	return outputError
 	// }
 
-	// Decodificar el archivo en base64 y guardarlo
-	// decoded, err := base64.StdEncoding.DecodeString(encodeFile)
-	// if err != nil {
-	// 	return fmt.Errorf("Error al decodificar el archivo")
-	// }
+	// Retornar el excel en base64
 
-	// Guardar el archivo
-	// err = ioutil.WriteFile("static/documento/evaluacion_"+informacion_evaluacion.EmpresaProveedor+".pdf", decoded, 0644)
-	// if err != nil {
-	// 	return fmt.Errorf("Error al guardar el archivo")
-	// }
+	buffer := new(bytes.Buffer)
+	if err := f.Write(buffer); err != nil {
+		outputError = fmt.Errorf("Error al escribir el archivo en memoria: %v", err)
+		return excel, outputError
+	}
 
-	// if err := pdf.OutputFileAndClose("static/documento/prueba.pdf"); err != nil {
-	// 	fmt.Println(err)
-	// 	return
-	// }
+	// Convertir el buffer a Base64
+	excel.Nombre = fmt.Sprintf("Evaluacion_%s", informacion_evaluacion.EmpresaProveedor)
+	excel.File = base64.StdEncoding.EncodeToString(buffer.Bytes())
 
-	return nil
+	return excel, nil
+}
+
+func obtenerValoresSeccion(f *excelize.File, celdas []string, sheetName string) int {
+	var total = 0
+	for _, celda := range celdas {
+		valor, err := f.GetCellValue(sheetName, celda)
+		if err != nil {
+			return 0
+		}
+		valor_int, err := strconv.Atoi(valor)
+		if err != nil {
+			return 0
+		}
+		total += valor_int
+	}
+	return total
 }
 
 func encodePDF(pdf *gofpdf.Fpdf) (encodedFile string, outputError error) {
@@ -186,6 +198,17 @@ func encodePDF(pdf *gofpdf.Fpdf) (encodedFile string, outputError error) {
 	encodedFile = base64.StdEncoding.EncodeToString(buffer.Bytes())
 	//fmt.Println(encodedFile)
 	return encodedFile, nil
+}
+
+func ObtenetTipoProveedor(puntaje_evaluacion int) string {
+	switch {
+	case puntaje_evaluacion >= 0 && puntaje_evaluacion <= 45:
+		return "TIPO C: MALO"
+	case puntaje_evaluacion >= 46 && puntaje_evaluacion <= 79:
+		return "TIPO B: BUENO"
+	default:
+		return "TIPO A: EXCELENTE"
+	}
 }
 
 func ExcelToPDFWithStyles(inputFile, outputFile string) error {
@@ -740,8 +763,8 @@ func ObtenerInformacionDocumento(evaluacion_id int) (informacion_evaluacion mode
 	// Obtener la evaluacion
 	var resultado_evaluacion map[string]interface{}
 	var evaluacion []models.Evaluacion
-	//fmt.Println("Url evaluacion: ", beego.AppConfig.String("UrlEvaluacionesCumplidosProveedoresCrud")+"/evaluacion/?query=Id:"+strconv.Itoa(evaluacion_id)+",Activo:true&limit=-1")
-	if response, err := helpers.GetJsonTest(beego.AppConfig.String("UrlEvaluacionesCumplidosProveedoresCrud")+"/evaluacion/?query=Id:"+strconv.Itoa(evaluacion_id)+",Activo:true&limit=-1", &resultado_evaluacion); err != nil && response != 200 {
+	//fmt.Println("Url evaluacion: ", beego.AppConfig.String("UrlEvaluacionCumplidoCrud")+"/evaluacion/?query=Id:"+strconv.Itoa(evaluacion_id)+",Activo:true&limit=-1")
+	if response, err := helpers.GetJsonTest(beego.AppConfig.String("UrlEvaluacionCumplidoCrud")+"/evaluacion/?query=Id:"+strconv.Itoa(evaluacion_id)+",Activo:true&limit=-1", &resultado_evaluacion); err != nil && response != 200 {
 		outputError = fmt.Errorf("Error al obtener la evaluacion")
 		return informacion_evaluacion, outputError
 	}
@@ -779,7 +802,7 @@ func ObtenerInformacionDocumento(evaluacion_id int) (informacion_evaluacion mode
 
 	//Obtener los datos del proveedor
 	var informacion_proveedor []models.InformacionProveedor
-	if response, err := helpers.GetJsonTest(beego.AppConfig.String("UrlAmazonApi")+"/informacion_proveedor/?query=Id:"+strconv.Itoa(contrato_general.Contratista), &informacion_proveedor); (err != nil) && (response != 200) {
+	if response, err := helpers.GetJsonTest(beego.AppConfig.String("UrlAdministrativaAmazonApi")+"/informacion_proveedor/?query=Id:"+strconv.Itoa(contrato_general.Contratista), &informacion_proveedor); (err != nil) && (response != 200) {
 		outputError = fmt.Errorf("Error al obtener la informacion del proveedor")
 		return informacion_evaluacion, outputError
 	}

@@ -3,7 +3,6 @@ package models
 import "time"
 
 type ItemEvaluacion struct {
-	Id                int
 	EvaluacionId      Evaluacion
 	Identificador     string
 	Nombre            string

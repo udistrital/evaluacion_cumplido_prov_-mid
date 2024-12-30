@@ -19,7 +19,7 @@ func init() {
 				&controllers.ResultadoEvaluacionController{},
 			),
 		),
-		beego.NSNamespace("/resultado_final_evaluacion",
+		beego.NSNamespace("/resultado-final-evaluacion"
 			beego.NSInclude(
 				&controllers.DocumentoEvaluacionController{},
 			),

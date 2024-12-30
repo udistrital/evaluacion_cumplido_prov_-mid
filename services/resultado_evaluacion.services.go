@@ -35,8 +35,8 @@ func GuardarResultadoEvaluacion(resultado models.BodyResultadoEvaluacion) (outpu
 
 	var respuesta_peticion map[string]interface{}
 
-	//fmt.Println("URL: ", beego.AppConfig.String("UrlEvaluacionesCumplidosProveedoresCrud")+"/resultado_evaluacion")
-	if err := helpers.SendJson(beego.AppConfig.String("UrlEvaluacionesCumplidosProveedoresCrud")+"/resultado_evaluacion", "POST", &respuesta_peticion, resultado_map); err != nil {
+	//fmt.Println("URL: ", beego.AppConfig.String("UrlEvaluacionCumplidoCrud")+"/resultado_evaluacion")
+	if err := helpers.SendJson(beego.AppConfig.String("UrlEvaluacionCumplidoCrud")+"/resultado_evaluacion", "POST", &respuesta_peticion, resultado_map); err != nil {
 		outputError = fmt.Errorf("Error al guardar el resultado de la evaluación")
 		return outputError
 	}
@@ -55,9 +55,9 @@ func ObtenerResultadoFinalEvaluacion(evaluacion_id int) (resultados_finales mode
 	// Validar que la evaluacion este en estado Pendiente Revision Evaluadores
 
 	var respuesta_cambio_estado map[string]interface{}
-	//fmt.Println("URL: ", beego.AppConfig.String("UrlEvaluacionesCumplidosProveedoresCrud")+"/cambio_estado_evaluacion/?query=EvaluacionId.Id:"+strconv.Itoa(evaluacion_id)+",EstadoEvaluacionId.CodigoAbreviacion:AE,Activo:true&limit=-1&sortby=FechaCreacion&order=desc")
+	//fmt.Println("URL: ", beego.AppConfig.String("UrlEvaluacionCumplidoCrud")+"/cambio_estado_evaluacion/?query=EvaluacionId.Id:"+strconv.Itoa(evaluacion_id)+",EstadoEvaluacionId.CodigoAbreviacion:AE,Activo:true&limit=-1&sortby=FechaCreacion&order=desc")
 
-	if response, err := helpers.GetJsonTest(beego.AppConfig.String("UrlEvaluacionesCumplidosProveedoresCrud")+"/cambio_estado_evaluacion/?query=EvaluacionId.Id:"+strconv.Itoa(evaluacion_id)+",EstadoEvaluacionId.CodigoAbreviacion:PRE,Activo:true&limit=-1&sortby=FechaCreacion&order=desc", &respuesta_cambio_estado); err != nil && response != 200 {
+	if response, err := helpers.GetJsonTest(beego.AppConfig.String("UrlEvaluacionCumplidoCrud")+"/cambio_estado_evaluacion/?query=EvaluacionId.Id:"+strconv.Itoa(evaluacion_id)+",EstadoEvaluacionId.CodigoAbreviacion:PRE,Activo:true&limit=-1&sortby=FechaCreacion&order=desc", &respuesta_cambio_estado); err != nil && response != 200 {
 		outputError = fmt.Errorf("Error al obtener el cambio de estado de la evaluación")
 		return resultados_finales, outputError
 	}
@@ -72,8 +72,8 @@ func ObtenerResultadoFinalEvaluacion(evaluacion_id int) (resultados_finales mode
 	var respuesta_evaluadores map[string]interface{}
 	var evaluadores []models.AsignacionEvaluador
 
-	//fmt.Println("URL evaluadores: ", beego.AppConfig.String("UrlEvaluacionesCumplidosProveedoresCrud")+"/asignacion_evaluador/?query=EvaluacionId.Id:"+strconv.Itoa(evaluacion_id)+",Activo:true&limit=-1")
-	if response, err := helpers.GetJsonTest(beego.AppConfig.String("UrlEvaluacionesCumplidosProveedoresCrud")+"/asignacion_evaluador/?query=EvaluacionId.Id:"+strconv.Itoa(evaluacion_id)+",Activo:true&limit=-1", &respuesta_evaluadores); err != nil && response != 200 {
+	//fmt.Println("URL evaluadores: ", beego.AppConfig.String("UrlEvaluacionCumplidoCrud")+"/asignacion_evaluador/?query=EvaluacionId.Id:"+strconv.Itoa(evaluacion_id)+",Activo:true&limit=-1")
+	if response, err := helpers.GetJsonTest(beego.AppConfig.String("UrlEvaluacionCumplidoCrud")+"/asignacion_evaluador/?query=EvaluacionId.Id:"+strconv.Itoa(evaluacion_id)+",Activo:true&limit=-1", &respuesta_evaluadores); err != nil && response != 200 {
 		outputError = fmt.Errorf("Error al obtener los evaluadores de la evaluación")
 		return resultados_finales, outputError
 	}

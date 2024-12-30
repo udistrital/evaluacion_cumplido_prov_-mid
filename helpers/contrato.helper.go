@@ -16,8 +16,8 @@ func ObtenerContratoGeneral(numero_contrato_suscrito string, vigencia_contrato s
 	}()
 
 	var contrato []models.ContratoGeneral
-	//fmt.Println("Url contrato general: ", beego.AppConfig.String("UrlAmazonApi")+"/contrato_general/?query=ContratoSuscrito.NumeroContratoSuscrito:"+numero_contrato_suscrito+",VigenciaContrato:"+vigencia_contrato)
-	if response, err := GetJsonTest(beego.AppConfig.String("UrlAmazonApi")+"/contrato_general/?query=ContratoSuscrito.NumeroContratoSuscrito:"+numero_contrato_suscrito+",VigenciaContrato:"+vigencia_contrato, &contrato); (err == nil) && (response == 200) {
+	//fmt.Println("Url contrato general: ", beego.AppConfig.String("UrlAdministrativaAmazonApi")+"/contrato_general/?query=ContratoSuscrito.NumeroContratoSuscrito:"+numero_contrato_suscrito+",VigenciaContrato:"+vigencia_contrato)
+	if response, err := GetJsonTest(beego.AppConfig.String("UrlAdministrativaAmazonApi")+"/contrato_general/?query=ContratoSuscrito.NumeroContratoSuscrito:"+numero_contrato_suscrito+",VigenciaContrato:"+vigencia_contrato, &contrato); (err == nil) && (response == 200) {
 		if len(contrato) > 0 {
 			return contrato[0], nil
 		} else {
@@ -81,8 +81,8 @@ func ObtenerNombrePersonaNatural(documento_persona string) (nombre_persona strin
 	}()
 
 	var informacion []models.InformacionPersonaNatural
-	fmt.Println("Url informacion persona: ", beego.AppConfig.String("UrlcrudAgora")+"/informacion_persona_natural/?fields=PrimerNombre,SegundoNombre,PrimerApellido,SegundoApellido&limit=0&query=Id:"+documento_persona)
-	if response, err := GetJsonTest(beego.AppConfig.String("UrlcrudAgora")+"/informacion_persona_natural/?fields=PrimerNombre,SegundoNombre,PrimerApellido,SegundoApellido&limit=0&query=Id:"+documento_persona, &informacion); err != nil && response != 200 {
+	//fmt.Println("Url informacion persona: ", beego.AppConfig.String("UrlAdministrativaAmazonApi")+"/informacion_persona_natural/?fields=PrimerNombre,SegundoNombre,PrimerApellido,SegundoApellido&limit=0&query=Id:"+documento_persona)
+	if response, err := GetJsonTest(beego.AppConfig.String("UrlAdministrativaAmazonApi")+"/informacion_persona_natural/?fields=PrimerNombre,SegundoNombre,PrimerApellido,SegundoApellido&limit=0&query=Id:"+documento_persona, &informacion); err != nil && response != 200 {
 		outputError = fmt.Errorf("Error al obtener la información de la persona")
 		return nombre_persona, outputError
 	}
