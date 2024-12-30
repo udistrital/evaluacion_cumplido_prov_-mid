@@ -251,13 +251,13 @@ func consultarContratosPorDependencia(dependencia string) (contratos []models.Co
 func limpiarSinAsignaciones(Asignaciones, SinAsignaciones []models.AsignacionEvaluacion) []models.AsignacionEvaluacion {
 	asignacionesMap := make(map[string]bool)
 	for _, a := range Asignaciones {
-		key := fmt.Sprintf("%d-%s", a.AsignacionEvaluacionId, a.VigenciaContrato)
+		key := fmt.Sprintf("%s-%s", a.NumeroContrato, a.VigenciaContrato)
 		asignacionesMap[key] = true
 	}
 
 	var filtroSinAsignaciones []models.AsignacionEvaluacion
 	for _, sa := range SinAsignaciones {
-		key := fmt.Sprintf("%d-%s", sa.AsignacionEvaluacionId, sa.VigenciaContrato)
+		key := fmt.Sprintf("%s-%s", sa.NumeroContrato, sa.VigenciaContrato)
 		if !asignacionesMap[key] {
 			filtroSinAsignaciones = append(filtroSinAsignaciones, sa)
 		}
