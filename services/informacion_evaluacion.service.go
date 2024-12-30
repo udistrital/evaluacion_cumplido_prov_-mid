@@ -22,8 +22,8 @@ func ObtenerInformacionEvaluacion(asignacion_evaluacion_id string) (informacion_
 	var asignacion_evaluadores []models.AsignacionEvaluador
 
 	// Se Busca la asignacion evaluador por id
-	// fmt.Println("Url asignacion evaluador: ", beego.AppConfig.String("urlEvaluacionCumplidosCrud")+"/asignacion_evaluador/?query=Id:"+asignacion_evaluacion_id+",Activo:true&limit=-1")
-	if response, err := helpers.GetJsonTest(beego.AppConfig.String("urlEvaluacionCumplidosCrud")+"/asignacion_evaluador/?query=Id:"+asignacion_evaluacion_id+",Activo:true&limit=-1", &respuesta_asignacion_evaluador); err != nil && response != 200 {
+	//fmt.Println("Url asignacion evaluador: ", beego.AppConfig.String("UrlEvaluacionCumplidoCrud")+"/asignacion_evaluador/?query=Id:"+asignacion_evaluacion_id+",Activo:true&limit=-1")
+	if response, err := helpers.GetJsonTest(beego.AppConfig.String("UrlEvaluacionCumplidoCrud")+"/asignacion_evaluador/?query=Id:"+asignacion_evaluacion_id+",Activo:true&limit=-1", &respuesta_asignacion_evaluador); err != nil && response != 200 {
 		outputError = fmt.Errorf("Error al obtener la asignación del evaluador")
 		return informacion_evaluacion, outputError
 	}
@@ -98,7 +98,7 @@ func ObtenerInformacionEvaluacion(asignacion_evaluacion_id string) (informacion_
 	}
 	//Obtener los datos del proveedor
 	var informacion_proveedor []models.InformacionProveedor
-	if response, err := helpers.GetJsonTest(beego.AppConfig.String("UrlAmazonApi")+"/informacion_proveedor/?query=Id:"+strconv.Itoa(contrato_general.Contratista), &informacion_proveedor); (err != nil) && (response != 200) {
+	if response, err := helpers.GetJsonTest(beego.AppConfig.String("UrlAdministrativaAmazonApi")+"/informacion_proveedor/?query=Id:"+strconv.Itoa(contrato_general.Contratista), &informacion_proveedor); (err != nil) && (response != 200) {
 		outputError = fmt.Errorf("Error al obtener la informacion del proveedor")
 		return informacion_evaluacion, outputError
 	}
@@ -148,7 +148,7 @@ func ObtenerEvaluadores(asignacion_evaluador models.AsignacionEvaluador) (evalua
 		var respuesta_evaluadores map[string]interface{}
 		var evaluadores_asignacion []models.AsignacionEvaluador
 
-		if response, err := helpers.GetJsonTest(beego.AppConfig.String("UrlEvaluacionesCumplidosProveedoresCrud")+"/asignacion_evaluador/?query=EvaluacionId.Id:"+strconv.Itoa(asignacion_evaluador.EvaluacionId.Id)+",Activo:true&limit=-1", &respuesta_evaluadores); err != nil && response != 200 {
+		if response, err := helpers.GetJsonTest(beego.AppConfig.String("UrlEvaluacionCumplidoCrud")+"/asignacion_evaluador/?query=EvaluacionId.Id:"+strconv.Itoa(asignacion_evaluador.EvaluacionId.Id)+",Activo:true&limit=-1", &respuesta_evaluadores); err != nil && response != 200 {
 			outputError = fmt.Errorf("Error al obtener los evaluadores de la evaluación")
 			return evaluadores, outputError
 		}
@@ -170,7 +170,7 @@ func ObtenerEvaluadores(asignacion_evaluador models.AsignacionEvaluador) (evalua
 			var cambio_estado_asignacion_evaluador []models.CambioEstadoAsignacionEvaluador
 
 			// Obtener el estado de la evaluacion de cada evaluador
-			if response, err := helpers.GetJsonTest(beego.AppConfig.String("UrlEvaluacionesCumplidosProveedoresCrud")+"/cambio_estado_asignacion_evaluador/?query=AsignacionEvaluadorId.Id:"+strconv.Itoa(evaluador.Id)+",Activo:true&limit=-1&sortby=FechaCreacion&order=desc", &respuesta_cambio_estado_asignacion_evaluador); err != nil && response != 200 {
+			if response, err := helpers.GetJsonTest(beego.AppConfig.String("UrlEvaluacionCumplidoCrud")+"/cambio_estado_asignacion_evaluador/?query=AsignacionEvaluadorId.Id:"+strconv.Itoa(evaluador.Id)+",Activo:true&limit=-1&sortby=FechaCreacion&order=desc", &respuesta_cambio_estado_asignacion_evaluador); err != nil && response != 200 {
 				outputError = fmt.Errorf("Error al obtener el cambio de estado de la asignación del evaluador")
 				return evaluadores, outputError
 			}
@@ -224,7 +224,7 @@ func ObtenerEvaluadores(asignacion_evaluador models.AsignacionEvaluador) (evalua
 		var cambio_estado_asignacion_evaluador []models.CambioEstadoAsignacionEvaluador
 
 		// Obtener el estado de la evaluacion de cada evaluador
-		if response, err := helpers.GetJsonTest(beego.AppConfig.String("urlEvaluacionCumplidosCrud")+"/cambio_estado_asignacion_evaluador/?query=AsignacionEvaluadorId.Id:"+strconv.Itoa(asignacion_evaluador.Id)+",Activo:true&limit=-1&sortby=FechaCreacion&order=desc", &respuesta_cambio_estado_asignacion_evaluador); err != nil && response != 200 {
+		if response, err := helpers.GetJsonTest(beego.AppConfig.String("UrlEvaluacionCumplidoCrud")+"/cambio_estado_asignacion_evaluador/?query=AsignacionEvaluadorId.Id:"+strconv.Itoa(asignacion_evaluador.Id)+",Activo:true&limit=-1&sortby=FechaCreacion&order=desc", &respuesta_cambio_estado_asignacion_evaluador); err != nil && response != 200 {
 			outputError = fmt.Errorf("Error al obtener el cambio de estado de la asignación del evaluador")
 			return evaluadores, outputError
 		}

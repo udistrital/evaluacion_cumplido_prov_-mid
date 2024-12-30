@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"mime/multipart"
 	"strconv"
+	"strings"
 
 	"github.com/astaxie/beego"
 	"github.com/udistrital/evaluacion_cumplido_prov_mid/helpers"
@@ -12,7 +13,7 @@ import (
 )
 
 // / CargaDataExcel lee  y  carga la data de un archivo excel
-func CargaDataExcel(excel multipart.File) (response string, itemsNoAGregados []models.ItemEvaluacion, outputError error) {
+func CargaDataExcel(excel multipart.File, evaluacionId int) (response string, itemsNoAGregados []models.ItemEvaluacion, outputError error) {
 
 	defer func() {
 		if err := recover(); err != nil {
@@ -57,7 +58,7 @@ func CargaDataExcel(excel multipart.File) (response string, itemsNoAGregados []m
 			Iva:           parseFloat(obtenerCelda(f, posicionIva, i), 64),
 			FichaTecnica:  obtenerCelda(f, posicionFichaTecnica, i),
 			EvaluacionId: models.Evaluacion{
-				Id: 1,
+				Id: evaluacionId,
 			},
 		}
 
@@ -68,6 +69,8 @@ func CargaDataExcel(excel multipart.File) (response string, itemsNoAGregados []m
 		if valorTipoNecesidad != 0 {
 			item.TipoNecesidad = valorTipoNecesidad
 		}
+
+		fmt.Printf("Item #%d: %+v\n", i-1, item)
 
 		if verificarExistencia(itemsAAGregar, item.Identificador) {
 			itemsAAGregar = append(itemsAAGregar, item)
@@ -105,21 +108,25 @@ func parseFloat(s string, bitSize int) float64 {
 func obtenerUnidadMedida(unidad string) (idUnidad int) {
 	unidadRespuesta, _ := ObternerUnidadMedida(unidad)
 
-	if unidadRespuesta != nil {
-		idUnidad = *unidadRespuesta
+	if unidadRespuesta != 0 {
+		idUnidad = unidadRespuesta
 		return idUnidad
 	}
 	return 0
 }
 
 func obtenerTipoNecesidad(tipoNecesidad string) (idTipoNecesidad int) {
-	if tipoNecesidad == "BIEN" {
+	fmt.Println("Tipo necesidad: ", tipoNecesidad)
+	if strings.ToLower(tipoNecesidad) == "bien" {
+		fmt.Println("Bien")
 		return 1
 	}
-	if tipoNecesidad == "SERVICIO" {
+	if strings.ToLower(tipoNecesidad) == "servicio" {
+		fmt.Println("Servicio")
 		return 2
 	}
-	if tipoNecesidad == "BIENES Y SERVICIOS" {
+	if strings.ToLower(tipoNecesidad) == "bien/servicio" {
+		fmt.Println("Bien y servicio")
 		return 3
 	}
 	return 0
@@ -136,7 +143,7 @@ func verificarExistencia(listaItems []models.ItemEvaluacion, identificadorItem s
 
 }
 
-func ObternerUnidadMedida(unidad string) (idUnidad *int, outputError error) {
+func ObternerUnidadMedida(unidad string) (idUnidad int, outputError error) {
 	defer func() {
 		if err := recover(); err != nil {
 			outputError = fmt.Errorf("%v", err)
@@ -146,16 +153,24 @@ func ObternerUnidadMedida(unidad string) (idUnidad *int, outputError error) {
 
 	var unidadMedida []models.UnidadMedida
 
-	if response, err := helpers.GetJsonWSO2Test(beego.AppConfig.String("UrlAdministrativaAmazonApi")+"/unidad", &unidadMedida); err == nil && response == 200 {
+	if response, err := helpers.GetJsonWSO2Test(beego.AppConfig.String("UrlAdministrativaAmazonApi")+"/unidad", &unidadMedida); err != nil && response != 200 {
+		outputError = fmt.Errorf("Error al obtener las unidades de medida")
+		return 0, outputError
 	}
-	return nil, outputError
+
+	for _, unidadMedidaItem := range unidadMedida {
+		if strings.ToLower(unidadMedidaItem.Unidad) == strings.ToLower(unidad) {
+			return unidadMedidaItem.Id, nil
+		}
+	}
+	return 0, outputError
 }
 
 func GuardarItems(items []models.ItemEvaluacion) (response map[string]interface{}, err error) {
 
 	var respuesta_peticion map[string]interface{}
 
-	if err := helpers.SendJson(beego.AppConfig.String("urlEvaluacionCumplidosCrud")+"/item/guardado_multiple", "POST", &respuesta_peticion, items); err == nil {
+	if err := helpers.SendJson(beego.AppConfig.String("UrlEvaluacionCumplidoCrud")+"/item/guardado_multiple", "POST", &respuesta_peticion, items); err == nil {
 
 		return respuesta_peticion, nil
 	}

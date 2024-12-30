@@ -29,8 +29,8 @@ func SubirEvaluacionCumplido(evaluacion_id string) (carga_cumplidos []models.Cum
 	// Obtener la evaluacion y verificar que exista
 	var resultado_evaluacion map[string]interface{}
 	var evaluacion []models.Evaluacion
-	//fmt.Println("Url evaluacion: ", beego.AppConfig.String("UrlEvaluacionesCumplidosProveedoresCrud")+"/evaluacion/?query=Id:"+strconv.Itoa(evaluacion_id)+",Activo:true&limit=-1")
-	if response, err := helpers.GetJsonTest(beego.AppConfig.String("UrlEvaluacionesCumplidosProveedoresCrud")+"/evaluacion/?query=Id:"+evaluacion_id+",Activo:true&limit=-1", &resultado_evaluacion); err != nil && response != 200 {
+	//fmt.Println("Url evaluacion: ", beego.AppConfig.String("UrlEvaluacionCumplidoCrud")+"/evaluacion/?query=Id:"+strconv.Itoa(evaluacion_id)+",Activo:true&limit=-1")
+	if response, err := helpers.GetJsonTest(beego.AppConfig.String("UrlEvaluacionCumplidoCrud")+"/evaluacion/?query=Id:"+evaluacion_id+",Activo:true&limit=-1", &resultado_evaluacion); err != nil && response != 200 {
 		outputError = fmt.Errorf("Error al obtener la evaluacion")
 		return carga_cumplidos, outputError
 	}

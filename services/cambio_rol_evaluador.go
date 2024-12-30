@@ -58,8 +58,9 @@ func consultarAsignacionesPorIdEvaluacionYEstadoEvaluador(idEvaluacion string) (
 	}()
 	var respuestaPeticion map[string]interface{}
 	var listaAsignacionEvaluador []models.AsignacionEvaluador
-	//fmt.Println(beego.AppConfig.String("urlEvaluacionCumplidosCrud") + "/asignacion_evaluador?query=EvaluacionId.Id:" + idEvaluacion + ",RolAsignacionEvaluadorId.CodigoAbreviacion:EV")
-	if response, err := helpers.GetJsonWSO2Test(beego.AppConfig.String("urlEvaluacionCumplidosCrud")+"/asignacion_evaluador?query=EvaluacionId.Id:"+idEvaluacion+",RolAsignacionEvaluadorId.CodigoAbreviacion:EV", &respuestaPeticion); err == nil && response == 200 {
+
+	fmt.Println(beego.AppConfig.String("UrlEvaluacionCumplidoCrud") + "/asignacion_evaluador?query=EvaluacionId.Id:" + idEvaluacion + ",RolAsignacionEvaluadorId.CodigoAbreviacion:EV")
+	if response, err := helpers.GetJsonWSO2Test(beego.AppConfig.String("UrlEvaluacionCumplidoCrud")+"/asignacion_evaluador?query=EvaluacionId.Id:"+idEvaluacion+",RolAsignacionEvaluadorId.CodigoAbreviacion:EV", &respuestaPeticion); err == nil && response == 200 {
 		helpers.LimpiezaRespuestaRefactor(respuestaPeticion, &listaAsignacionEvaluador)
 		if len(listaAsignacionEvaluador) > 0 && listaAsignacionEvaluador[0].EvaluacionId != nil {
 			asignaciones = listaAsignacionEvaluador
@@ -82,8 +83,8 @@ func consultarAsignacionesPorDocumentoEvaluadorYEstadoEvaluador(personaId string
 	asignacionesPendienesPorEvaluar = false
 	var respuestaPeticion map[string]interface{}
 	var listaAsignacionEvaluador []models.AsignacionEvaluador
-	//beego.AppConfig.String("urlEvaluacionCumplidosCrud") + "/asignacion_evaluador?query=EvaluacionId.Id:" + personaId + ",RolAsignacionEvaluadorId.CodigoAbreviacion:EV")
-	if response, err := helpers.GetJsonWSO2Test(beego.AppConfig.String("urlEvaluacionCumplidosCrud")+"/asignacion_evaluador?query=PersonaId:"+personaId+",RolAsignacionEvaluadorId.CodigoAbreviacion:EV", &respuestaPeticion); err == nil && response == 200 {
+	fmt.Println(beego.AppConfig.String("UrlEvaluacionCumplidoCrud") + "/asignacion_evaluador?query=EvaluacionId.Id:" + personaId + ",RolAsignacionEvaluadorId.CodigoAbreviacion:EV")
+	if response, err := helpers.GetJsonWSO2Test(beego.AppConfig.String("UrlEvaluacionCumplidoCrud")+"/asignacion_evaluador?query=PersonaId:"+personaId+",RolAsignacionEvaluadorId.CodigoAbreviacion:EV", &respuestaPeticion); err == nil && response == 200 {
 		helpers.LimpiezaRespuestaRefactor(respuestaPeticion, &listaAsignacionEvaluador)
 		if len(listaAsignacionEvaluador) > 0 && listaAsignacionEvaluador[0].EvaluacionId != nil {
 
@@ -165,7 +166,7 @@ func consultarCambioEstadoEvaluacion(idEvalacion string) (cambiosEstadoEvaluacio
 	resultado_map := make(map[string]interface{})
 	var listCambiosEstadoEvaluacion []models.CambioEstadoEvaluacion
 
-	if response, err := helpers.GetJsonWSO2Test(beego.AppConfig.String("urlEvaluacionCumplidosCrud")+"/cambio_estado_evaluacion/?query=Activo:true,EvaluacionId.id:"+idEvalacion, &resultado_map); err == nil && response == 200 {
+	if response, err := helpers.GetJsonWSO2Test(beego.AppConfig.String("UrlEvaluacionCumplidoCrud")+"/cambio_estado_evaluacion/?query=Activo:true,EvaluacionId.id:"+idEvalacion, &resultado_map); err == nil && response == 200 {
 		helpers.LimpiezaRespuestaRefactor(resultado_map, &listCambiosEstadoEvaluacion)
 		//fmt.Println(listCambiosEstadoEvaluacion)
 		cambiosEstadoEvaluacion = &listCambiosEstadoEvaluacion[0]
