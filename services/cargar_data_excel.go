@@ -116,17 +116,13 @@ func obtenerUnidadMedida(unidad string) (idUnidad int) {
 }
 
 func obtenerTipoNecesidad(tipoNecesidad string) (idTipoNecesidad int) {
-	fmt.Println("Tipo necesidad: ", tipoNecesidad)
 	if strings.ToLower(tipoNecesidad) == "bien" {
-		fmt.Println("Bien")
 		return 1
 	}
 	if strings.ToLower(tipoNecesidad) == "servicio" {
-		fmt.Println("Servicio")
 		return 2
 	}
 	if strings.ToLower(tipoNecesidad) == "bien/servicio" {
-		fmt.Println("Bien y servicio")
 		return 3
 	}
 	return 0
