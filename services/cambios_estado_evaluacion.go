@@ -100,7 +100,7 @@ func ConsultarEstadoActualEvaluacion(id_evaluacion int) (estado_asignacion *mode
 	var cambio_estado_evaluacion []models.CambioEstadoEvaluacion
 
 	query := fmt.Sprintf("/cambio_estado_evaluacion/?query=EvaluacionId.Id:%d,Activo:true", id_evaluacion)
-	if response, err := helpers.GetJsonWSO2Test(beego.AppConfig.String("urlEvaluacionCumplidosCrud")+query, &respuestaPeticion); err == nil && response == 200 {
+	if response, err := helpers.GetJsonWSO2Test(beego.AppConfig.String("UrlEvaluacionCumplidoCrud")+query, &respuestaPeticion); err == nil && response == 200 {
 
 		helpers.LimpiezaRespuestaRefactor(respuestaPeticion, &cambio_estado_evaluacion)
 		if len(cambio_estado_evaluacion) > 0 && cambio_estado_evaluacion[0].Id != 0 {
@@ -132,7 +132,7 @@ func ConsultarEstadoEvaluacion(codigo_abreviacion_estado_evalauacion string) (es
 	var lista_estados_evaluacion []models.EstadoEvaluacion
 	query := fmt.Sprintf("/estado_evaluacion?query=CodigoAbreviacion:%s", codigo_abreviacion_estado_evalauacion)
 
-	if response, err := helpers.GetJsonWSO2Test(beego.AppConfig.String("urlEvaluacionCumplidosCrud")+query, &respuesta_peticion); err == nil && response == 200 {
+	if response, err := helpers.GetJsonWSO2Test(beego.AppConfig.String("UrlEvaluacionCumplidoCrud")+query, &respuesta_peticion); err == nil && response == 200 {
 
 		helpers.LimpiezaRespuestaRefactor(respuesta_peticion, &lista_estados_evaluacion)
 
@@ -161,7 +161,7 @@ func DesabilitarEstadoEvaluacion(estado_evalacion *models.CambioEstadoEvaluacion
 		estado_evalacion.Activo = false
 
 		query := fmt.Sprintf("/cambio_estado_evaluacion/%d", estado_evalacion.Id)
-		if response := helpers.SendJson(beego.AppConfig.String("urlEvaluacionCumplidosCrud")+query, "PUT", &respuestaPeticion, estado_evalacion); response == nil {
+		if response := helpers.SendJson(beego.AppConfig.String("UrlEvaluacionCumplidoCrud")+query, "PUT", &respuestaPeticion, estado_evalacion); response == nil {
 		} else {
 			outputError = fmt.Errorf("error al desabilitar el estado")
 			return outputError
@@ -201,7 +201,7 @@ func AgregarEstadoEvaluacion(codigo_abreviacion string, id_evaluacion int) (outp
 	}
 
 	fmt.Println(cambio_estado_evaluacion.Activo)
-	if response := helpers.SendJson(beego.AppConfig.String("urlEvaluacionCumplidosCrud")+"/cambio_estado_evaluacion", "POST", &respuestaPeticion, cambio_estado_evaluacion); response == nil {
+	if response := helpers.SendJson(beego.AppConfig.String("UrlEvaluacionCumplidoCrud")+"/cambio_estado_evaluacion", "POST", &respuestaPeticion, cambio_estado_evaluacion); response == nil {
 
 		fmt.Println(response)
 	} else {

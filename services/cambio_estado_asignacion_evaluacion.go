@@ -165,8 +165,8 @@ func consultarEstadoAsignacionEvaluacion(codigo_estado string) (cambio_estado_as
 
 	var respuesta_peticion = make(map[string]interface{})
 	var lista_asignacion_evaluador []models.EstadoAsignacionEvaluador
-	fmt.Print(beego.AppConfig.String("urlEvaluacionCumplidosCrud") + "/estado_asignacion_evaluador?query=CodigoAbreviacion:" + codigo_estado)
-	if response, err := helpers.GetJsonWSO2Test(beego.AppConfig.String("urlEvaluacionCumplidosCrud")+"/estado_asignacion_evaluador?query=CodigoAbreviacion:"+codigo_estado, &respuesta_peticion); err == nil && response == 200 {
+	fmt.Print(beego.AppConfig.String("UrlEvaluacionCumplidoCrud") + "/estado_asignacion_evaluador?query=CodigoAbreviacion:" + codigo_estado)
+	if response, err := helpers.GetJsonWSO2Test(beego.AppConfig.String("UrlEvaluacionCumplidoCrud")+"/estado_asignacion_evaluador?query=CodigoAbreviacion:"+codigo_estado, &respuesta_peticion); err == nil && response == 200 {
 
 		helpers.LimpiezaRespuestaRefactor(respuesta_peticion, &lista_asignacion_evaluador)
 
@@ -195,7 +195,8 @@ func ConsultarAsignacionesPorIdEvaluacion(id_evaluacion int) (asignacion *[]mode
 	var asignaciones_evaluador []models.AsignacionEvaluador
 
 	query := fmt.Sprintf("/asignacion_evaluador?query=EvaluacionId.Id:%d", id_evaluacion)
-	if response, err := helpers.GetJsonWSO2Test(beego.AppConfig.String("urlEvaluacionCumplidosCrud")+query, &respuestaPeticion); err == nil && response == 200 {
+	fmt.Println(beego.AppConfig.String("UrlEvaluacionCumplidoCrud") + query)
+	if response, err := helpers.GetJsonWSO2Test(beego.AppConfig.String("UrlEvaluacionCumplidoCrud")+query, &respuestaPeticion); err == nil && response == 200 {
 
 		helpers.LimpiezaRespuestaRefactor(respuestaPeticion, &asignaciones_evaluador)
 		if len(asignaciones_evaluador) > 0 && asignaciones_evaluador[0].EvaluacionId != nil {
@@ -223,8 +224,8 @@ func ConsultarEstadoActualAsingacion(id_asiganacion int) (estado_asignacion *mod
 	var cambio_estado_asignacion_evaluador []models.CambioEstadoASignacionEnvaluacion
 
 	query := fmt.Sprintf("/cambio_estado_asignacion_evaluador/?query=AsignacionEvaluadorId.Id:%d,Activo:true", id_asiganacion)
-
-	if response, err := helpers.GetJsonWSO2Test(beego.AppConfig.String("urlEvaluacionCumplidosCrud")+query, &respuestaPeticion); err == nil && response == 200 {
+	fmt.Println(beego.AppConfig.String("UrlEvaluacionCumplidoCrud") + query)
+	if response, err := helpers.GetJsonWSO2Test(beego.AppConfig.String("UrlEvaluacionCumplidoCrud")+query, &respuestaPeticion); err == nil && response == 200 {
 
 		helpers.LimpiezaRespuestaRefactor(respuestaPeticion, &cambio_estado_asignacion_evaluador)
 		if len(cambio_estado_asignacion_evaluador) > 0 && cambio_estado_asignacion_evaluador[0].Id != 0 {
@@ -256,7 +257,7 @@ func desabilitarEstadoAsignacion(estadoAsignacion *models.CambioEstadoASignacion
 
 		query := fmt.Sprintf("/cambio_estado_asignacion_evaluador/%d", estadoAsignacion.Id)
 
-		if response := helpers.SendJson(beego.AppConfig.String("urlEvaluacionCumplidosCrud")+query, "PUT", &respuestaPeticion, estadoAsignacion); response == nil {
+		if response := helpers.SendJson(beego.AppConfig.String("UrlEvaluacionCumplidoCrud")+query, "PUT", &respuestaPeticion, estadoAsignacion); response == nil {
 		} else {
 			outputError = fmt.Errorf("error al desabilitar el estado")
 			return outputError
@@ -301,7 +302,8 @@ func agregarEstadoAsignacion(codigo_abrevicaion string, id_asiganacion int) (out
 	}
 
 	fmt.Println(cambio_estado_asignacion_evaluador.Activo)
-	if response := helpers.SendJson(beego.AppConfig.String("urlEvaluacionCumplidosCrud")+"/cambio_estado_asignacion_evaluador", "POST", &respuestaPeticion, cambio_estado_asignacion_evaluador); response == nil {
+	fmt.Println(cambio_estado_asignacion_evaluador.EstadoAsignacionEvaluador.Id)
+	if response := helpers.SendJson(beego.AppConfig.String("UrlEvaluacionCumplidoCrud")+"/cambio_estado_asignacion_evaluador", "POST", &respuestaPeticion, cambio_estado_asignacion_evaluador); response == nil {
 
 		fmt.Println(response)
 	} else {

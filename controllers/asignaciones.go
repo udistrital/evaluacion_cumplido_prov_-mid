@@ -60,7 +60,7 @@ func (c *AsignacionesController) CambiarEstadoAsignacionEvaluacion() {
 	if err == nil {
 
 		c.Ctx.Output.SetStatus(200)
-		c.Data["json"] = requestresponse.APIResponseDTO(true, 200, nil, response)
+		c.Data["json"] = requestresponse.APIResponseDTO(true, 200, nil, response["Message"])
 	} else {
 		c.Ctx.Output.SetStatus(400)
 		c.Data["json"] = requestresponse.APIResponseDTO(false, 400, nil, err.Error())
