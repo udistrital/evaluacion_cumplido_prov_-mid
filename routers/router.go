@@ -53,7 +53,11 @@ func init() {
 			beego.NSInclude(
 				&controllers.FirmaElectronica{},
 			),
+		),
+		beego.NSNamespace("/notificaciones",
+			beego.NSInclude(
+				&controllers.NotificacionesEvaluacionController{},
+			),
 		))
-
 	beego.AddNamespace(ns)
 }

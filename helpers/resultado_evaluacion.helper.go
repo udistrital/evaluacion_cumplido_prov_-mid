@@ -106,7 +106,7 @@ func ObtenerItemsEvaluador(asignacion_evaluador_id int) (items_evaluador []model
 
 	for _, item := range items {
 		items_evaluador = append(items_evaluador, item.ItemId)
-		items_evaluador_formateados += strconv.Itoa(item.Id) + ", "
+		items_evaluador_formateados += item.ItemId.Identificador + ", "
 	}
 
 	return items_evaluador, strings.TrimSuffix(items_evaluador_formateados, ", "), nil
@@ -136,7 +136,7 @@ func ObtenerItemsEvaluacion(evaluacion_id int) (items_evaluacion []models.Item, 
 	LimpiezaRespuestaRefactor(respuesta_items_evaluacion, &items_evaluacion)
 
 	for _, item := range items_evaluacion {
-		items_evaluador_formateados += strconv.Itoa(item.Id) + ", "
+		items_evaluador_formateados += item.Identificador + ", "
 	}
 
 	return items_evaluacion, strings.TrimSuffix(items_evaluador_formateados, ", "), nil
