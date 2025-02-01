@@ -85,9 +85,9 @@ func ObtenerListaDeAsignaciones(documento string) (mapResponse map[string]interf
 	mapResponse["SinAsignaciones"] = limpiarSinAsignaciones(listaConsultasAsignaciones, listaSinAsignaciones)
 
 	for _, asignacion := range listaConsultasAsignaciones {
-		if asignacion.EstadoEvaluacion.CodigoAbreviacion != "GNT" {
-			listaAsignaciones = append(listaAsignaciones, asignacion)
-		}
+
+		listaAsignaciones = append(listaAsignaciones, asignacion)
+
 	}
 	mapResponse["Asignaciones"] = listaAsignaciones
 
@@ -153,7 +153,7 @@ func obtenerContratoGeneral(contratoSuscritoId int, vigenciaContrato int) (contr
 		}
 	}()
 
-	fmt.Print(beego.AppConfig.String("UrlcrudAgora"))
+	//fmt.Print(beego.AppConfig.String("UrlcrudAgora") + "/contrato_general/?query=ContratoSuscrito.NumeroContratoSuscrito:" + strconv.Itoa(contratoSuscritoId) + ",VigenciaContrato:" + strconv.Itoa(vigenciaContrato))
 
 	if response, err := helpers.GetJsonWSO2Test(beego.AppConfig.String("UrlcrudAgora")+"/contrato_general/?query=ContratoSuscrito.NumeroContratoSuscrito:"+strconv.Itoa(contratoSuscritoId)+",VigenciaContrato:"+strconv.Itoa(vigenciaContrato), &contratoGeneral); err == nil && response == 200 {
 	} else {
@@ -209,6 +209,7 @@ func obtenerProveedor(contratistaId int, asignacion models.AsignacionEvaluador, 
 			EvaluacionId:              asignacion.EvaluacionId.Id,
 			EstadoAsignacionEvaluador: estado[0].EstadoAsignacionEvaluador,
 			EstadoEvaluacion:          &estadoEvaluacion,
+			RolEvaluador:              asignacion.RolAsignacionEvaluadorId.CodigoAbreviacion,
 		}
 		asisgnaciones = asignacionEvaluacion
 	} else {
