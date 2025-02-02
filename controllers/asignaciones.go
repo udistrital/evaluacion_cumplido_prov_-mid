@@ -47,7 +47,7 @@ func (c *AsignacionesController) ConsultarAsignaciones() {
 // @Param Nmero de numeroDocumento path 	string	true "numeroDocumento"
 // @Success 200 {object} models.CambioEstadoCumplidoResponse
 // @Failure 404 {object} map[string]interface{}
-// @router /cambiar-estado/ [post]
+// @router /cambiar-estado [post]
 func (c *AsignacionesController) CambiarEstadoAsignacionEvaluacion() {
 	defer errorhandler.HandlePanic(&c.Controller)
 
@@ -60,7 +60,7 @@ func (c *AsignacionesController) CambiarEstadoAsignacionEvaluacion() {
 	if err == nil {
 
 		c.Ctx.Output.SetStatus(200)
-		c.Data["json"] = requestresponse.APIResponseDTO(true, 200, nil, response)
+		c.Data["json"] = requestresponse.APIResponseDTO(true, 200, nil, response["Message"])
 	} else {
 		c.Ctx.Output.SetStatus(400)
 		c.Data["json"] = requestresponse.APIResponseDTO(false, 400, nil, err.Error())

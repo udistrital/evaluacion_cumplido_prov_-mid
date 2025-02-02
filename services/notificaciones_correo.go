@@ -53,30 +53,38 @@ func EnviarNotificacionesAsignacionEvaluacion(evaluacionId int) (errores []strin
 	// Enviar notificaciones a los evaluadores
 	for _, evaluador := range evaluadores {
 		// Obtener el correo del evaluador
+		var email string
 		var autenticacion_persona models.AutenticacionPersona
 		var respuesta_autenticacion map[string]interface{}
-		body_autenticacion := map[string]interface{}{
-			"numero": evaluador.PersonaId,
-		}
-		if err := helpers.SendJson(beego.AppConfig.String("UrlAutenticacionMid")+"/token/documentoToken", "POST", &respuesta_autenticacion, body_autenticacion); err != nil {
-			errores = append(errores, fmt.Sprintf("Error al obtener el correo del evaluador %v", evaluador.PersonaId))
-			continue
-		}
 
-		json_autenticacion, err := json.Marshal(respuesta_autenticacion)
-		if err != nil {
-			errores = append(errores, fmt.Sprintf("Error al obtener el correo del evaluador %v", evaluador.PersonaId))
-			continue
-		}
-		err = json.Unmarshal(json_autenticacion, &autenticacion_persona)
-		if err != nil {
-			errores = append(errores, fmt.Sprintf("Error al obtener el correo del evaluador %v", evaluador.PersonaId))
-			continue
-		}
+		if beego.AppConfig.String("runmode") != "prod" {
+			// Poner aqui el email que se usara para realizar las pruebas de las notificaciones
+			email = "fctrujilloo@udistrital.edu.co"
+		} else {
+			body_autenticacion := map[string]interface{}{
+				"numero": evaluador.PersonaId,
+			}
+			if err := helpers.SendJson(beego.AppConfig.String("UrlAutenticacionMid")+"/token/documentoToken", "POST", &respuesta_autenticacion, body_autenticacion); err != nil {
+				errores = append(errores, fmt.Sprintf("Error al obtener el correo del evaluador %v", evaluador.PersonaId))
+				continue
+			}
 
-		if autenticacion_persona.Email == "" {
-			errores = append(errores, fmt.Sprintf("El evaluador %v no tiene correo registrado", evaluador.PersonaId))
-			continue
+			json_autenticacion, err := json.Marshal(respuesta_autenticacion)
+			if err != nil {
+				errores = append(errores, fmt.Sprintf("Error al obtener el correo del evaluador %v", evaluador.PersonaId))
+				continue
+			}
+			err = json.Unmarshal(json_autenticacion, &autenticacion_persona)
+			if err != nil {
+				errores = append(errores, fmt.Sprintf("Error al obtener el correo del evaluador %v", evaluador.PersonaId))
+				continue
+			}
+
+			if autenticacion_persona.Email == "" {
+				errores = append(errores, fmt.Sprintf("El evaluador %v no tiene correo registrado", evaluador.PersonaId))
+				continue
+			}
+			email = autenticacion_persona.Email
 		}
 
 		//Obtener los items evaluados del evaluador
@@ -91,7 +99,8 @@ func EnviarNotificacionesAsignacionEvaluacion(evaluacionId int) (errores []strin
 		body_enviar_notificacion.Source = "notificacionescumplidosproveedores@udistrital.edu.co"
 		body_enviar_notificacion.Template = "PLANTILLA_ASIGNACION_EVALUACION"
 		body_enviar_notificacion.Destinations = make([]models.DestinationAsignacionEvaluacion, 1)
-		body_enviar_notificacion.Destinations[0].Destination.ToAddresses = append(body_enviar_notificacion.Destinations[0].Destination.ToAddresses, autenticacion_persona.Email)
+		fmt.Println("Email: ", email)
+		body_enviar_notificacion.Destinations[0].Destination.ToAddresses = append(body_enviar_notificacion.Destinations[0].Destination.ToAddresses, email)
 		body_enviar_notificacion.Destinations[0].ReplacementTemplateData.RolEvaluador = evaluador.RolAsignacionEvaluadorId.Nombre
 		body_enviar_notificacion.Destinations[0].ReplacementTemplateData.NombreProveedor = informacion_proveedor[0].NomProveedor
 		body_enviar_notificacion.Destinations[0].ReplacementTemplateData.ItemsEvaluar = items_evaluador_formateados
@@ -107,6 +116,7 @@ func EnviarNotificacionesAsignacionEvaluacion(evaluacionId int) (errores []strin
 			errores = append(errores, fmt.Sprintf("Error al enviar la notificación al correo del evaluador %v", evaluador.PersonaId))
 			continue
 		}
+		fmt.Println("Respuesta: ", respuesta)
 	}
 	return errores, nil
 }
@@ -132,30 +142,38 @@ func EnviarNotificacionRealizacionEvaluacion(documento_evaluador string, vigenci
 	}
 
 	// Obtener el correo del evaluador
-	var autenticacion_persona models.AutenticacionPersona
-	var respuesta_autenticacion map[string]interface{}
-	body_autenticacion := map[string]interface{}{
-		"numero": documento_evaluador,
-	}
-	if err := helpers.SendJson(beego.AppConfig.String("UrlAutenticacionMid")+"/token/documentoToken", "POST", &respuesta_autenticacion, body_autenticacion); err != nil {
-		outputError = fmt.Errorf("Error al obtener el correo del evaluador %v", documento_evaluador)
-		return outputError
-	}
+	var email string
 
-	json_autenticacion, err := json.Marshal(respuesta_autenticacion)
-	if err != nil {
-		outputError = fmt.Errorf("Error al obtener el correo del evaluador %v", documento_evaluador)
-		return outputError
-	}
-	err = json.Unmarshal(json_autenticacion, &autenticacion_persona)
-	if err != nil {
-		outputError = fmt.Errorf("Error al obtener el correo del evaluador %v", documento_evaluador)
-		return outputError
-	}
+	if beego.AppConfig.String("runmode") != "prod" {
+		// Poner aqui el email que se usara para realizar las pruebas de las notificaciones
+		email = "fctrujilloo@udistrital.edu.co"
+	} else {
+		var autenticacion_persona models.AutenticacionPersona
+		var respuesta_autenticacion map[string]interface{}
+		body_autenticacion := map[string]interface{}{
+			"numero": documento_evaluador,
+		}
+		if err := helpers.SendJson(beego.AppConfig.String("UrlAutenticacionMid")+"/token/documentoToken", "POST", &respuesta_autenticacion, body_autenticacion); err != nil {
+			outputError = fmt.Errorf("Error al obtener el correo del evaluador %v", documento_evaluador)
+			return outputError
+		}
 
-	if autenticacion_persona.Email == "" {
-		outputError = fmt.Errorf("El evaluador %v no tiene correo registrado", documento_evaluador)
-		return outputError
+		json_autenticacion, err := json.Marshal(respuesta_autenticacion)
+		if err != nil {
+			outputError = fmt.Errorf("Error al obtener el correo del evaluador %v", documento_evaluador)
+			return outputError
+		}
+		err = json.Unmarshal(json_autenticacion, &autenticacion_persona)
+		if err != nil {
+			outputError = fmt.Errorf("Error al obtener el correo del evaluador %v", documento_evaluador)
+			return outputError
+		}
+
+		if autenticacion_persona.Email == "" {
+			outputError = fmt.Errorf("El evaluador %v no tiene correo registrado", documento_evaluador)
+			return outputError
+		}
+		email = autenticacion_persona.Email
 	}
 
 	// Enviar notificación al correo del evaluador
@@ -163,7 +181,8 @@ func EnviarNotificacionRealizacionEvaluacion(documento_evaluador string, vigenci
 	body_enviar_notificacion.Source = "notificacionescumplidosproveedores@udistrital.edu.co"
 	body_enviar_notificacion.Template = "PLANTILLA_REALIZACION_EVALUACION"
 	body_enviar_notificacion.Destinations = make([]models.DestinationRealizacionEvaluacion, 1)
-	body_enviar_notificacion.Destinations[0].Destination.ToAddresses = append(body_enviar_notificacion.Destinations[0].Destination.ToAddresses, autenticacion_persona.Email)
+	fmt.Println("Email: ", email)
+	body_enviar_notificacion.Destinations[0].Destination.ToAddresses = append(body_enviar_notificacion.Destinations[0].Destination.ToAddresses, email)
 	body_enviar_notificacion.Destinations[0].ReplacementTemplateData.NombreProveedor = informacion_proveedor[0].NomProveedor
 	body_enviar_notificacion.Destinations[0].ReplacementTemplateData.Vigencia = vigencia
 	body_enviar_notificacion.Destinations[0].ReplacementTemplateData.NumeroContrato = numero_contrato
@@ -179,6 +198,7 @@ func EnviarNotificacionRealizacionEvaluacion(documento_evaluador string, vigenci
 		outputError = fmt.Errorf("Error al enviar la notificación al correo del evaluador %v", documento_evaluador)
 		return outputError
 	}
+	fmt.Println("Respuesta: ", respuesta)
 	return nil
 }
 
@@ -234,31 +254,38 @@ func EnviarNotificacionesFinalizacionEvaluacion(evaluacionId int, numero_contrat
 
 	// Enviar notificaciones a los evaluadores
 	for _, evaluador := range evaluadores {
+		var email string
 		// Obtener el correo del evaluador
 		var autenticacion_persona models.AutenticacionPersona
 		var respuesta_autenticacion map[string]interface{}
-		body_autenticacion := map[string]interface{}{
-			"numero": evaluador.PersonaId,
-		}
-		if err := helpers.SendJson(beego.AppConfig.String("UrlAutenticacionMid")+"/token/documentoToken", "POST", &respuesta_autenticacion, body_autenticacion); err != nil {
-			errores = append(errores, fmt.Sprintf("Error al obtener el correo del evaluador %v", evaluador.PersonaId))
-			continue
-		}
+		if beego.AppConfig.String("runmode") != "prod" {
+			// Poner aqui el email que se usara para realizar las pruebas de las notificaciones
+			email = "fctrujilloo@udistrital.edu.co"
+		} else {
+			body_autenticacion := map[string]interface{}{
+				"numero": evaluador.PersonaId,
+			}
+			if err := helpers.SendJson(beego.AppConfig.String("UrlAutenticacionMid")+"/token/documentoToken", "POST", &respuesta_autenticacion, body_autenticacion); err != nil {
+				errores = append(errores, fmt.Sprintf("Error al obtener el correo del evaluador %v", evaluador.PersonaId))
+				continue
+			}
 
-		json_autenticacion, err := json.Marshal(respuesta_autenticacion)
-		if err != nil {
-			errores = append(errores, fmt.Sprintf("Error al obtener el correo del evaluador %v", evaluador.PersonaId))
-			continue
-		}
-		err = json.Unmarshal(json_autenticacion, &autenticacion_persona)
-		if err != nil {
-			errores = append(errores, fmt.Sprintf("Error al obtener el correo del evaluador %v", evaluador.PersonaId))
-			continue
-		}
+			json_autenticacion, err := json.Marshal(respuesta_autenticacion)
+			if err != nil {
+				errores = append(errores, fmt.Sprintf("Error al obtener el correo del evaluador %v", evaluador.PersonaId))
+				continue
+			}
+			err = json.Unmarshal(json_autenticacion, &autenticacion_persona)
+			if err != nil {
+				errores = append(errores, fmt.Sprintf("Error al obtener el correo del evaluador %v", evaluador.PersonaId))
+				continue
+			}
 
-		if autenticacion_persona.Email == "" {
-			errores = append(errores, fmt.Sprintf("El evaluador %v no tiene correo registrado", evaluador.PersonaId))
-			continue
+			if autenticacion_persona.Email == "" {
+				errores = append(errores, fmt.Sprintf("El evaluador %v no tiene correo registrado", evaluador.PersonaId))
+				continue
+			}
+			email = autenticacion_persona.Email
 		}
 
 		// Enviar notificación al correo del evaluador
@@ -266,7 +293,8 @@ func EnviarNotificacionesFinalizacionEvaluacion(evaluacionId int, numero_contrat
 		body_enviar_notificacion.Source = "notificacionescumplidosproveedores@udistrital.edu.co"
 		body_enviar_notificacion.Template = "PLANTILLA_EVALUACION_FINALIZADA"
 		body_enviar_notificacion.Destinations = make([]models.DestinationFinalizacionEvaluacion, 1)
-		body_enviar_notificacion.Destinations[0].Destination.ToAddresses = append(body_enviar_notificacion.Destinations[0].Destination.ToAddresses, autenticacion_persona.Email)
+		fmt.Println("Email: ", email)
+		body_enviar_notificacion.Destinations[0].Destination.ToAddresses = append(body_enviar_notificacion.Destinations[0].Destination.ToAddresses, email)
 		body_enviar_notificacion.Destinations[0].ReplacementTemplateData.NombreProveedor = informacion_proveedor[0].NomProveedor
 		body_enviar_notificacion.Destinations[0].ReplacementTemplateData.Vigencia = vigencia
 		body_enviar_notificacion.Destinations[0].ReplacementTemplateData.NumeroContrato = numero_contrato
@@ -284,6 +312,8 @@ func EnviarNotificacionesFinalizacionEvaluacion(evaluacionId int, numero_contrat
 			errores = append(errores, fmt.Sprintf("Error al enviar la notificación al correo del evaluador %v", evaluador.PersonaId))
 			continue
 		}
+
+		fmt.Println("Respuesta: ", respuesta)
 
 	}
 	return errores, nil

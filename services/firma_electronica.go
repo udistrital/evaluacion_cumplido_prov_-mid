@@ -216,7 +216,7 @@ func guardarDocumentoFirmado(id_documento_firmado int, evaluacuion_id int) (outp
 	var map_response = make(map[string]interface{})
 	query := fmt.Sprintf("/evaluacion/%d", evaluacion.Id)
 
-	if err := helpers.SendJson(beego.AppConfig.String("urlEvaluacionCumplidosCrud")+query, "PUT", &map_response, evaluacion); err != nil {
+	if err := helpers.SendJson(beego.AppConfig.String("UrlEvaluacionCumplidoCrud")+query, "PUT", &map_response, evaluacion); err != nil {
 		return nil
 	}
 	outputError = fmt.Errorf("error al guardar el documento firmado")
@@ -234,8 +234,8 @@ func ConsultarInfoPersonaNatural(numero_documento string) (info_persona_natural 
 
 	var consulta_info_persona_natural []models.Persona
 	query := fmt.Sprintf("/informacion_persona_natural?query=Id:%s", numero_documento)
-	fmt.Print(beego.AppConfig.String("UrlcrudAgora") + query)
-	if response, err := helpers.GetJsonWSO2Test(beego.AppConfig.String("UrlcrudAgora")+query, &consulta_info_persona_natural); err == nil && response == 200 {
+	fmt.Print(beego.AppConfig.String("UrlAdministrativaAmazonApi") + query)
+	if response, err := helpers.GetJsonWSO2Test(beego.AppConfig.String("UrlAdministrativaAmazonApi")+query, &consulta_info_persona_natural); err == nil && response == 200 {
 
 		if consulta_info_persona_natural != nil && consulta_info_persona_natural[0].Id != "" {
 
@@ -266,8 +266,8 @@ func ConsultarAsignacion(id_asiganacion int) (asignacion *models.AsignacionEvalu
 	var consulta_asignaciones []models.AsignacionEvaluador
 
 	query := fmt.Sprintf("/asignacion_evaluador?query=Id:%d", id_asiganacion)
-	fmt.Println(beego.AppConfig.String("urlEvaluacionCumplidosCrud") + query)
-	if response, err := helpers.GetJsonWSO2Test(beego.AppConfig.String("urlEvaluacionCumplidosCrud")+query, &map_response); err == nil && response == 200 {
+	fmt.Println(beego.AppConfig.String("UrlEvaluacionCumplidoCrud") + query)
+	if response, err := helpers.GetJsonWSO2Test(beego.AppConfig.String("UrlEvaluacionCumplidoCrud")+query, &map_response); err == nil && response == 200 {
 
 		helpers.LimpiezaRespuestaRefactor(map_response, &consulta_asignaciones)
 
@@ -301,7 +301,7 @@ func ConsultarEvaluacion(id_evalacion int) (evaluacion *models.Evaluacion, outpu
 	var consulta_evaluaciones []models.Evaluacion
 	var map_response = make(map[string]interface{})
 	query := fmt.Sprintf("/evaluacion/?query=Id:%d", id_evalacion)
-	if response, err := helpers.GetJsonWSO2Test(beego.AppConfig.String("urlEvaluacionCumplidosCrud")+query, &map_response); err == nil && response == 200 {
+	if response, err := helpers.GetJsonWSO2Test(beego.AppConfig.String("UrlEvaluacionCumplidoCrud")+query, &map_response); err == nil && response == 200 {
 		helpers.LimpiezaRespuestaRefactor(map_response, &consulta_evaluaciones)
 		if consulta_evaluaciones != nil && consulta_evaluaciones[0].Id != 0 {
 

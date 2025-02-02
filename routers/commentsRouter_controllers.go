@@ -10,7 +10,7 @@ func init() {
     beego.GlobalControllerRouter["github.com/udistrital/evaluacion_cumplido_prov_mid/controllers:AsignacionesController"] = append(beego.GlobalControllerRouter["github.com/udistrital/evaluacion_cumplido_prov_mid/controllers:AsignacionesController"],
         beego.ControllerComments{
             Method: "CambiarEstadoAsignacionEvaluacion",
-            Router: "/cambiar-estado/",
+            Router: "/cambiar-estado",
             AllowHTTPMethods: []string{"post"},
             MethodParams: param.Make(),
             Filters: nil,

@@ -12,7 +12,7 @@ type CambioRolEvaluadorController struct {
 }
 
 func (c *CambioRolEvaluadorController) URLMapping() {
-
+	c.Mapping("CambiarRolAsignacionEvaluador", c.CambiarRolAsignacionEvaluador)
 }
 
 // @Title CambiarRolAsignacionEvaluador

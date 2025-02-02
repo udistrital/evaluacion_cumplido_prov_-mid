@@ -16,6 +16,8 @@ func CambioEstadoEvaluacion(id_evaluacion int, codigo_estado string) (mapRespons
 		}
 	}()
 
+	var contadorPorcentaje float64
+
 	estado_actual, err := ConsultarEstadoActualEvaluacion(id_evaluacion)
 
 	if err != nil {
@@ -65,6 +67,15 @@ func CambioEstadoEvaluacion(id_evaluacion int, codigo_estado string) (mapRespons
 
 			if err != nil {
 				outputError = fmt.Errorf("error al consultar asignaciones")
+				return nil, outputError
+			}
+
+			for _, asignacion := range *lista_asignaciones {
+				contadorPorcentaje += asignacion.PorcentajeEvaluacion
+			}
+
+			if contadorPorcentaje != 1 {
+				outputError = fmt.Errorf("No se ha asignado el 100" + "%" + " de la evaluacion")
 				return nil, outputError
 			}
 
