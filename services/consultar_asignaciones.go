@@ -331,7 +331,7 @@ func ObtenerEstadoEvaluacion(idEvaluacion int) (estadoEvaluacion models.EstadoEv
 
 	var respuestaPeticion map[string]interface{}
 	var estadosEvaluacion []models.CambioEstadoEvaluacion
-	query := fmt.Sprintf("/cambio_estado_evaluacion/?query=EvaluacionId.Id:%d,EstadoEvaluacionId.Activo:true", idEvaluacion)
+	query := fmt.Sprintf("/cambio_estado_evaluacion/?query=EvaluacionId.Id:%d,Activo:true", idEvaluacion)
 	fmt.Print(beego.AppConfig.String("urlEvaluacionCumplidoCrud") + query)
 	fmt.Print(beego.AppConfig.String("urlEvaluacionCumplidoCrud") + query)
 	if response, err := helpers.GetJsonTest(beego.AppConfig.String("urlEvaluacionCumplidoCrud")+query, &respuestaPeticion); err == nil && response == 200 {
