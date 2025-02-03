@@ -59,7 +59,7 @@ func EnviarNotificacionesAsignacionEvaluacion(evaluacionId int) (errores []strin
 
 		if beego.AppConfig.String("runmode") != "prod" {
 			// Poner aqui el email que se usara para realizar las pruebas de las notificaciones
-			email = "fctrujilloo@udistrital.edu.co"
+			email = ""
 		} else {
 			body_autenticacion := map[string]interface{}{
 				"numero": evaluador.PersonaId,
