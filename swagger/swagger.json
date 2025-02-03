@@ -5,7 +5,7 @@
     },
     "basePath": "/v1",
     "paths": {
-        "/asignaciones/cambiar-estado/": {
+        "/asignaciones/cambiar-estado": {
             "post": {
                 "tags": [
                     "asignaciones"
@@ -233,6 +233,35 @@
                 }
             }
         },
+        "/notificaciones/{evaluacion_id}": {
+            "get": {
+                "tags": [
+                    "notificaciones"
+                ],
+                "description": "Notifica a los evaluadores que se les ha asignado una evaluación",
+                "operationId": "NotificacionesEvaluacionController.NotificacionAsignacionEvaluacion",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "description": "Id de la evaluación",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/map[string]interface{}"
+                        }
+                    },
+                    "404": {
+                        "description": "{object} map[string]interface{}"
+                    }
+                }
+            }
+        },
         "/resultado-final-evaluacion/{evaluacion_id}": {
             "get": {
                 "tags": [
@@ -295,15 +324,15 @@
         }
     },
     "definitions": {
-        "1991.0xc0003faf00.false": {
+        "2377.0xc000400900.false": {
             "title": "false",
             "type": "object"
         },
-        "20942.0xc000425170.false": {
+        "24058.0xc00043b170.false": {
             "title": "false",
             "type": "object"
         },
-        "21032.0xc0004251d0.false": {
+        "24148.0xc00043b1d0.false": {
             "title": "false",
             "type": "object"
         },
@@ -525,7 +554,7 @@
                 "ResultadosIndividuales": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/1991.0xc0003faf00.false"
+                        "$ref": "#/definitions/2377.0xc000400900.false"
                     }
                 }
             }
@@ -537,13 +566,13 @@
                 "Evaluadores": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/20942.0xc000425170.false"
+                        "$ref": "#/definitions/24058.0xc00043b170.false"
                     }
                 },
                 "Resultados": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/21032.0xc0004251d0.false"
+                        "$ref": "#/definitions/24148.0xc00043b1d0.false"
                     }
                 }
             }

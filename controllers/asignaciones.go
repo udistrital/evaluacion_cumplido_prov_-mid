@@ -47,7 +47,7 @@ func (c *AsignacionesController) ConsultarAsignaciones() {
 // @Param Nmero de numeroDocumento path 	string	true "numeroDocumento"
 // @Success 200 {object} models.CambioEstadoCumplidoResponse
 // @Failure 404 {object} map[string]interface{}
-// @router /cambiar-estado/ [post]
+// @router /cambiar-estado [post]
 func (c *AsignacionesController) CambiarEstadoAsignacionEvaluacion() {
 	defer errorhandler.HandlePanic(&c.Controller)
 

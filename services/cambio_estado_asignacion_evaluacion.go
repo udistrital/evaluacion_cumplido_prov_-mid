@@ -2,6 +2,7 @@ package services
 
 import (
 	"fmt"
+	"strconv"
 
 	"github.com/astaxie/beego"
 	"github.com/udistrital/evaluacion_cumplido_prov_mid/helpers"
@@ -11,8 +12,8 @@ import (
 func CambioEstadoAsignacionEvaluacion(id_asiganacion int, codigo_estado string) (mapResponse map[string]interface{}, outputError error) {
 
 	estados_asignables := map[string][]string{
-		"EA": {"ER", "EA"},
-		"ER": {"EAP"},
+		"EAG": {"ERE", "EAG"},
+		"ERE": {"EAP"},
 	}
 
 	defer func() {
@@ -43,17 +44,16 @@ func CambioEstadoAsignacionEvaluacion(id_asiganacion int, codigo_estado string) 
 		return nil, outputError
 	}
 
-	//si estado_asignacion es nulo y el codigo_estado es EA se agrega el estado
-	if estado_asignacion_actual == nil && codigo_estado == "EA" {
+	//si estado_asignacion es nulo y el codigo_estado es EAG se agrega el estado
+	if estado_asignacion_actual == nil && codigo_estado == "EAG" {
 		agregarEstadoAsignacion(codigo_estado, id_asiganacion)
 		mapResponse := make(map[string]interface{})
-		mapResponse["Message"] = "Se agrego esl estado EA"
+		mapResponse["Message"] = "Se agrego el estado EAG"
 		return mapResponse, nil
 	}
 
-	//si estado_asignacion es nulo y el codigo_estado no es EA no se puede asiganar el estado
-	if estado_asignacion_actual == nil && codigo_estado != "EA" {
-		fmt.Println("no se puede asiganar el estado")
+	//si estado_asignacion es nulo y el codigo_estado no es EAG no se puede asiganar el estado
+	if estado_asignacion_actual == nil && codigo_estado != "EAG" {
 		outputError = fmt.Errorf("error no se pude asginar el estado : %s, a una asigancion nueva", codigo_estado)
 		return nil, outputError
 	}
@@ -92,7 +92,8 @@ func CambioEstadoAsignacionEvaluacion(id_asiganacion int, codigo_estado string) 
 			return nil, outputError
 		}
 
-		if codigo_estado == "ER" {
+		if codigo_estado == "ERE" {
+			EnviarNotificacionRealizacionEvaluacion(estado_asignacion_actual.AsignacionEvaluadorId.PersonaId, strconv.Itoa(estado_asignacion_actual.AsignacionEvaluadorId.EvaluacionId.VigenciaContrato), strconv.Itoa(estado_asignacion_actual.AsignacionEvaluadorId.EvaluacionId.ContratoSuscritoId))
 			cambiar_estado_evaluacion, err := VerificarYCambiarEstadoEvaluacion(estado_asignacion_actual.AsignacionEvaluadorId.EvaluacionId.Id, codigo_estado)
 
 			if err != nil {
@@ -140,6 +141,8 @@ func CambioEstadoAsignacionEvaluacion(id_asiganacion int, codigo_estado string) 
 					return nil, outputError
 
 				}
+
+				_, _ = EnviarNotificacionesFinalizacionEvaluacion(estado_asignacion_actual.AsignacionEvaluadorId.EvaluacionId.Id, strconv.Itoa(estado_asignacion_actual.AsignacionEvaluadorId.EvaluacionId.ContratoSuscritoId), strconv.Itoa(estado_asignacion_actual.AsignacionEvaluadorId.EvaluacionId.VigenciaContrato))
 			}
 
 		}
@@ -165,7 +168,7 @@ func consultarEstadoAsignacionEvaluacion(codigo_estado string) (cambio_estado_as
 
 	var respuesta_peticion = make(map[string]interface{})
 	var lista_asignacion_evaluador []models.EstadoAsignacionEvaluador
-	fmt.Print(beego.AppConfig.String("UrlEvaluacionCumplidoCrud") + "/estado_asignacion_evaluador?query=CodigoAbreviacion:" + codigo_estado)
+	//fmt.Println("Url Estado Asignacion", beego.AppConfig.String("UrlEvaluacionCumplidoCrud")+"/estado_asignacion_evaluador?query=CodigoAbreviacion:"+codigo_estado)
 	if response, err := helpers.GetJsonWSO2Test(beego.AppConfig.String("UrlEvaluacionCumplidoCrud")+"/estado_asignacion_evaluador?query=CodigoAbreviacion:"+codigo_estado, &respuesta_peticion); err == nil && response == 200 {
 
 		helpers.LimpiezaRespuestaRefactor(respuesta_peticion, &lista_asignacion_evaluador)
@@ -194,8 +197,8 @@ func ConsultarAsignacionesPorIdEvaluacion(id_evaluacion int) (asignacion *[]mode
 	var respuestaPeticion map[string]interface{}
 	var asignaciones_evaluador []models.AsignacionEvaluador
 
-	query := fmt.Sprintf("/asignacion_evaluador?query=EvaluacionId.Id:%d", id_evaluacion)
-	fmt.Println(beego.AppConfig.String("UrlEvaluacionCumplidoCrud") + query)
+	query := fmt.Sprintf("/asignacion_evaluador?query=EvaluacionId.Id:%d,Activo:true&limit=-1", id_evaluacion)
+	//fmt.Println("Url Asignacion", beego.AppConfig.String("UrlEvaluacionCumplidoCrud")+query)
 	if response, err := helpers.GetJsonWSO2Test(beego.AppConfig.String("UrlEvaluacionCumplidoCrud")+query, &respuestaPeticion); err == nil && response == 200 {
 
 		helpers.LimpiezaRespuestaRefactor(respuestaPeticion, &asignaciones_evaluador)
@@ -223,6 +226,7 @@ func ConsultarEstadoActualAsingacion(id_asiganacion int) (estado_asignacion *mod
 	var respuestaPeticion map[string]interface{}
 	var cambio_estado_asignacion_evaluador []models.CambioEstadoASignacionEnvaluacion
 
+	//fmt.Println("Url Estado Asignacion", beego.AppConfig.String("UrlEvaluacionCumplidoCrud")+"/cambio_estado_asignacion_evaluador/?query=AsignacionEvaluadorId.Id:"+strconv.Itoa(id_asiganacion)+",Activo:true")
 	query := fmt.Sprintf("/cambio_estado_asignacion_evaluador/?query=AsignacionEvaluadorId.Id:%d,Activo:true", id_asiganacion)
 	fmt.Println(beego.AppConfig.String("UrlEvaluacionCumplidoCrud") + query)
 	if response, err := helpers.GetJsonWSO2Test(beego.AppConfig.String("UrlEvaluacionCumplidoCrud")+query, &respuestaPeticion); err == nil && response == 200 {
@@ -341,6 +345,7 @@ func VerificarYCambiarEstadoEvaluacion(id_evaluacion int, estado_abreviacion str
 		return false, outputError
 	}
 
+	fmt.Println("Asignaciones", asiganciones)
 	for _, asigancion := range *asiganciones {
 
 		estado_asiganacion, err := ConsultarEstadoActualAsingacion(asigancion.Id)
@@ -357,6 +362,7 @@ func VerificarYCambiarEstadoEvaluacion(id_evaluacion int, estado_abreviacion str
 
 	}
 
+	fmt.Println("Cambiar Estado Evaluacion", cambiar_estado_evaluacion)
 	return cambiar_estado_evaluacion, outputError
 
 }

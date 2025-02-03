@@ -234,8 +234,8 @@ func ConsultarInfoPersonaNatural(numero_documento string) (info_persona_natural 
 
 	var consulta_info_persona_natural []models.Persona
 	query := fmt.Sprintf("/informacion_persona_natural?query=Id:%s", numero_documento)
-	fmt.Print(beego.AppConfig.String("UrlcrudAgora") + query)
-	if response, err := helpers.GetJsonWSO2Test(beego.AppConfig.String("UrlcrudAgora")+query, &consulta_info_persona_natural); err == nil && response == 200 {
+	fmt.Print(beego.AppConfig.String("UrlAdministrativaAmazonApi") + query)
+	if response, err := helpers.GetJsonWSO2Test(beego.AppConfig.String("UrlAdministrativaAmazonApi")+query, &consulta_info_persona_natural); err == nil && response == 200 {
 
 		if consulta_info_persona_natural != nil && consulta_info_persona_natural[0].Id != "" {
 
