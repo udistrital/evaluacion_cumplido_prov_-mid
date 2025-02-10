@@ -169,7 +169,7 @@ func consultarEstadoAsignacionEvaluacion(codigo_estado string) (cambio_estado_as
 	var respuesta_peticion = make(map[string]interface{})
 	var lista_asignacion_evaluador []models.EstadoAsignacionEvaluador
 	//fmt.Println("Url Estado Asignacion", beego.AppConfig.String("UrlEvaluacionCumplidoCrud")+"/estado_asignacion_evaluador?query=CodigoAbreviacion:"+codigo_estado)
-	if response, err := helpers.GetJsonWSO2Test(beego.AppConfig.String("UrlEvaluacionCumplidoCrud")+"/estado_asignacion_evaluador?query=CodigoAbreviacion:"+codigo_estado, &respuesta_peticion); err == nil && response == 200 {
+	if response, err := helpers.GetJsonWSO2Test(beego.AppConfig.String("UrlEvaluacionCumplidoCrud")+"/estado_asignacion_evaluador?query=CodigoAbreviacion:"+codigo_estado+",Activo:true", &respuesta_peticion); err == nil && response == 200 {
 
 		helpers.LimpiezaRespuestaRefactor(respuesta_peticion, &lista_asignacion_evaluador)
 

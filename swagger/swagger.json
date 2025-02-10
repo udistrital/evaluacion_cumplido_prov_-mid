@@ -324,15 +324,15 @@
         }
     },
     "definitions": {
-        "2377.0xc000400900.false": {
+        "2377.0xc0004139e0.false": {
             "title": "false",
             "type": "object"
         },
-        "24058.0xc00043b170.false": {
+        "24058.0xc00046c270.false": {
             "title": "false",
             "type": "object"
         },
-        "24148.0xc00043b1d0.false": {
+        "24148.0xc00046c2d0.false": {
             "title": "false",
             "type": "object"
         },
@@ -554,7 +554,7 @@
                 "ResultadosIndividuales": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/2377.0xc000400900.false"
+                        "$ref": "#/definitions/2377.0xc0004139e0.false"
                     }
                 }
             }
@@ -566,13 +566,13 @@
                 "Evaluadores": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/24058.0xc00043b170.false"
+                        "$ref": "#/definitions/24058.0xc00046c270.false"
                     }
                 },
                 "Resultados": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/24148.0xc00043b1d0.false"
+                        "$ref": "#/definitions/24148.0xc00046c2d0.false"
                     }
                 }
             }

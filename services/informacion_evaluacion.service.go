@@ -86,16 +86,11 @@ func ObtenerInformacionEvaluacion(asignacion_evaluacion_id string) (informacion_
 	}
 
 	// Obtener la dependencia evaluadora
-	dependencia_evaluadora, error_dependencia := helpers.ObtenerDependenciasSupervisor(strconv.Itoa(contrato_general.Supervisor.Documento))
+	dependencia_evaluadora, error_dependencia := ObtenerDependencia(contrato_general.Supervisor.DependenciaSupervisor)
 	if error_dependencia != nil {
 		informacion_evaluacion.DependenciaEvaluadora = ""
-	} else {
-		for _, dependencia := range dependencia_evaluadora {
-			if contrato_general.Supervisor.DependenciaSupervisor == dependencia.Codigo {
-				informacion_evaluacion.DependenciaEvaluadora = dependencia.Nombre
-			}
-		}
 	}
+
 	//Obtener los datos del proveedor
 	var informacion_proveedor []models.InformacionProveedor
 	if response, err := helpers.GetJsonTest(beego.AppConfig.String("UrlAdministrativaAmazonApi")+"/informacion_proveedor/?query=Id:"+strconv.Itoa(contrato_general.Contratista), &informacion_proveedor); (err != nil) && (response != 200) {
@@ -123,7 +118,7 @@ func ObtenerInformacionEvaluacion(asignacion_evaluacion_id string) (informacion_
 	// LLenar los datos del modelo a retornar
 	informacion_evaluacion.NombreEvaluador = nombre_evaluador
 	informacion_evaluacion.Cargo = asignacion_evaluadores[0].Cargo
-	informacion_evaluacion.DependenciaEvaluadora = dependencia_evaluadora[0].Nombre
+	informacion_evaluacion.DependenciaEvaluadora = dependencia_evaluadora
 	informacion_evaluacion.EmpresaProveedor = informacion_proveedor[0].NomProveedor
 	informacion_evaluacion.ObjetoContrato = contrato_general.ObjetoContrato
 	informacion_evaluacion.Evaluadores = evaluadores
@@ -211,6 +206,9 @@ func ObtenerEvaluadores(asignacion_evaluador models.AsignacionEvaluador) (evalua
 				datos_evaluador.PuntajeEvaluacion = puntaje_total_evaluacion
 			}
 
+			// Obtener las observaciones del evaluador
+			datos_evaluador.Observaciones = resultado_evaluacion.Observaciones
+
 			evaluadores = append(evaluadores, datos_evaluador)
 
 		}
@@ -263,6 +261,9 @@ func ObtenerEvaluadores(asignacion_evaluador models.AsignacionEvaluador) (evalua
 		} else {
 			datos_evaluador.PuntajeEvaluacion = puntaje_total_evaluacion
 		}
+
+		// Obtener las observaciones del evaluador
+		datos_evaluador.Observaciones = resultado_evaluacion.Observaciones
 
 		evaluadores = append(evaluadores, datos_evaluador)
 	}

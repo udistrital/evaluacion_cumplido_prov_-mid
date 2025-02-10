@@ -99,7 +99,7 @@ func consulartasingAsingnaciones(contratosDepedencia []models.ContratoGeneral) (
 
 	for _, contrato := range contratosDepedencia {
 
-		nombre_dependencia, _ := obtenerDependencia(contrato.Supervisor.DependenciaSupervisor)
+		nombre_dependencia, _ := ObtenerDependencia(contrato.Supervisor.DependenciaSupervisor)
 
 		var listaProveedor []models.InformacionProveedor
 		if response, err := helpers.GetJsonWSO2Test(beego.AppConfig.String("UrlAdministrativaAmazonApi")+"/informacion_proveedor/?query=Id:"+strconv.Itoa(contrato.Contratista), &listaProveedor); err == nil && response == 200 {
@@ -189,14 +189,14 @@ func obtenerProveedor(contratistaId int, asignacion models.AsignacionEvaluador, 
 	var listaProveedor []models.InformacionProveedor
 	contratoGeneral := listaContratoGeneral[0]
 	if response, err := helpers.GetJsonWSO2Test(beego.AppConfig.String("UrlAdministrativaAmazonApi")+"/informacion_proveedor/?query=Id:"+strconv.Itoa(contratistaId), &listaProveedor); err == nil && response == 200 {
-		estado, err := obtenerEstadoAsignacionEvaluacion(contratoGeneral.ContratoSuscrito[0].NumeroContratoSuscrito, strconv.Itoa(contratoGeneral.VigenciaContrato), true)
+		estado, err := obtenerEstadoAsignacionEvaluacion(asignacion.Id)
 
 		if err != nil {
 			return asisgnaciones, fmt.Errorf("Error al consultar estado de asignaciones")
 
 		}
 
-		nombre_dependencia, _ := obtenerDependencia(contratoGeneral.Supervisor.DependenciaSupervisor)
+		nombre_dependencia, _ := ObtenerDependencia(contratoGeneral.Supervisor.DependenciaSupervisor)
 		estadoEvaluacion, _ := ObtenerEstadoEvaluacion(asignacion.EvaluacionId.Id)
 		asignacionEvaluacion := models.AsignacionEvaluacion{
 			AsignacionEvaluacionId:    asignacion.Id,
@@ -276,14 +276,14 @@ func limpiarSinAsignaciones(Asignaciones, SinAsignaciones []models.AsignacionEva
 	return filtroSinAsignaciones
 }
 
-func obtenerEstadoAsignacionEvaluacion(ContratoSuscritoId, VigenciaContrato string, activo bool) (listaCambiosEstado []models.CambioEstadoASignacionEnvaluacion, outputError error) {
+func obtenerEstadoAsignacionEvaluacion(AsignacionId int) (listaCambiosEstado []models.CambioEstadoASignacionEnvaluacion, outputError error) {
 	defer func() {
 		if err := recover(); err != nil {
 			outputError = fmt.Errorf("%v", err)
 			panic(outputError)
 		}
 	}()
-	var query = fmt.Sprintf("/cambio_estado_asignacion_evaluador/?query=AsignacionEvaluadorId.EvaluacionId.ContratoSuscritoId:%s,AsignacionEvaluadorId.EvaluacionId.VigenciaContrato:%s,Activo:%t", ContratoSuscritoId, VigenciaContrato, activo)
+	var query = fmt.Sprintf("/cambio_estado_asignacion_evaluador/?query=AsignacionEvaluadorId.Id:%d,Activo:true", AsignacionId)
 
 	fmt.Println(beego.AppConfig.String("UrlEvaluacionCumplidoCrud") + query)
 	var respuestaPeticion map[string]interface{}
@@ -299,7 +299,7 @@ func obtenerEstadoAsignacionEvaluacion(ContratoSuscritoId, VigenciaContrato stri
 	return listaCambiosEstado, nil
 }
 
-func obtenerDependencia(codigoDependencia string) (nombreDependencia string, outputError error) {
+func ObtenerDependencia(codigoDependencia string) (nombreDependencia string, outputError error) {
 	defer func() {
 		if err := recover(); err != nil {
 			outputError = fmt.Errorf("%v", err)
@@ -330,7 +330,7 @@ func ObtenerEstadoEvaluacion(idEvaluacion int) (estadoEvaluacion models.EstadoEv
 
 	var respuestaPeticion map[string]interface{}
 	var estadosEvaluacion []models.CambioEstadoEvaluacion
-	query := fmt.Sprintf("/cambio_estado_evaluacion/?query=EvaluacionId.Id:%d,EstadoEvaluacionId.Activo:true", idEvaluacion)
+	query := fmt.Sprintf("/cambio_estado_evaluacion/?query=EvaluacionId.Id:%d,Activo:true", idEvaluacion)
 	fmt.Println(beego.AppConfig.String("urlEvaluacionCumplidoCrud") + query)
 	if response, err := helpers.GetJsonTest(beego.AppConfig.String("urlEvaluacionCumplidoCrud")+query, &respuestaPeticion); err == nil && response == 200 {
 		helpers.LimpiezaRespuestaRefactor(respuestaPeticion, &estadosEvaluacion)
